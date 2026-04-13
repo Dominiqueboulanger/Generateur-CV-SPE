@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Assistant CV SPE - Version Bêta V1.1</title>
+    <title>Assistant CV SPE - Version Bêta Complète</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
         :root { --blue: #3498db; --bg: #f4f7f6; --text: #2c3e50; --green: #27ae60; --orange: #e67e22; --purple: #9b59b6; }
@@ -24,7 +24,7 @@
         .theme-moderne .cv-item-title { font-weight: 700; color: #2d5a27; font-style: italic; }
 
         /* Interface Formulaire */
-        h2 { font-size: 1em; color: var(--text); margin: 15px 0 5px 0; }
+        h2 { font-size: 1em; color: var(--text); margin: 15px 0 5px 0; border-left: 4px solid var(--blue); padding-left: 8px; }
         input, select, textarea { width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; }
         .input-group { display: flex; gap: 5px; margin-bottom: 8px; }
         .btn-add { background: var(--blue); color: white; border: none; padding: 0 15px; border-radius: 6px; cursor: pointer; font-weight: bold; }
@@ -94,9 +94,13 @@
 
     <h2>🎓 Formations</h2>
     <div id="edu-inputs">
-        <textarea class="edu-in" placeholder="Diplôme (en gras)&#10;Lieu et Année" oninput="update()" rows="2"></textarea>
-        <textarea class="edu-in" placeholder="Diplôme (en gras)&#10;Lieu et Année" oninput="update()" rows="2"></textarea>
+        <textarea class="edu-in" placeholder="Diplôme 1 (en gras)&#10;Lieu et Année" oninput="update()" rows="2"></textarea>
+        <textarea class="edu-in" placeholder="Diplôme 2 (en gras)&#10;Lieu et Année" oninput="update()" rows="2"></textarea>
+        <textarea class="edu-in" placeholder="Diplôme 3 (en gras)&#10;Lieu et Année" oninput="update()" rows="2"></textarea>
     </div>
+
+    <h2>🎨 Centres d'intérêt</h2>
+    <input type="text" id="interets" placeholder="Vos loisirs, passions..." oninput="update()">
 
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top:15px;">
         <button class="btn btn-save" onclick="saveData()">💾 Sauvegarder</button>
@@ -172,6 +176,7 @@
         const paper = document.getElementById('cv-paper');
         const experiences = Array.from(document.querySelectorAll('.exp-in')).map(i => i.value).filter(v => v);
         const formations = Array.from(document.querySelectorAll('.edu-in')).map(i => i.value).filter(v => v);
+        const interets = document.getElementById('interets').value;
 
         paper.innerHTML = `
             <div class="cv-header" style="display:flex; align-items:center; padding-bottom:15px; margin-bottom:15px;">
@@ -195,6 +200,8 @@
 
             <h2>Formations</h2>
             <div style="font-size:0.9em;">${formations.map(f => `<div style="margin-bottom:12px;">${formatLines(f)}</div>`).join('')}</div>
+
+            ${interets ? `<h2>Centres d'intérêt</h2><p style="font-size:0.9em;">${interets}</p>` : ''}
         `;
         
         document.getElementById('tagsTech').innerHTML = selectedSkills.tech.map(t => `<span class="tag">${t}<b onclick="selectedSkills.tech=selectedSkills.tech.filter(x=>x!=='${t}');update()">✕</b></span>`).join('');
@@ -206,6 +213,7 @@
             nom: document.getElementById('nom').value, tel: document.getElementById('tel').value,
             email: document.getElementById('email').value, adresse: document.getElementById('adresse').value,
             metier: document.getElementById('metier').value, profil: document.getElementById('profil').value,
+            interets: document.getElementById('interets').value,
             tech: selectedSkills.tech, hum: selectedSkills.hum, photo: photoData,
             exp: Array.from(document.querySelectorAll('.exp-in')).map(i => i.value),
             edu: Array.from(document.querySelectorAll('.edu-in')).map(i => i.value)
@@ -235,6 +243,7 @@
         document.getElementById('adresse').value = d.adresse || '';
         document.getElementById('metier').value = d.metier || '';
         document.getElementById('profil').value = d.profil || '';
+        document.getElementById('interets').value = d.interets || '';
         selectedSkills.tech = d.tech || []; selectedSkills.hum = d.hum || [];
         photoData = d.photo || '';
         const expIn = document.querySelectorAll('.exp-in'); d.exp.forEach((v, i) => { if(expIn[i]) expIn[i].value = v; });
