@@ -23,8 +23,9 @@
         .tag { background: #e1f0fa; color: var(--blue); padding: 3px 10px; border-radius: 15px; font-size: 10px; margin: 2px; display: inline-flex; align-items: center; border: 1px solid var(--blue); }
         .tag b { margin-left: 6px; cursor: pointer; color: #e74c3c; }
         
-        /* Styles spécifiques pour le gras sur la première ligne */
+        /* Styles du CV */
         .cv-item-text b { font-weight: 700; display: block; margin-bottom: 2px; }
+        .be-item { font-size: 0.85em; margin-bottom: 4px; display: block; } /* Savoir-Être sans bordure */
 
         @media print { .no-print { display: none !important; } body { padding: 0; background: white; display: block; } .preview-side { background: white; padding: 0; width: 100%; height: auto; overflow: visible; } #cv-paper { box-shadow: none; margin: 0; width: 100%; height: 297mm; padding: 10mm; font-size: 10pt; } }
     </style>
@@ -47,30 +48,30 @@
     </select>
     <textarea id="profil" placeholder="Phrase d'accroche..." oninput="update()"></textarea>
 
-    <h2>🛠️ Compétences Techniques</h2>
+    <h2>🛠️ Savoir-Faire</h2>
     <select id="selTech" onchange="addTag('tech', this)"></select>
     <div class="input-group">
-        <input type="text" id="customTech" placeholder="Autre compétence...">
+        <input type="text" id="customTech" placeholder="Autre savoir-faire...">
         <button class="btn-add" onclick="addCustomTag('tech')">+</button>
     </div>
     <div id="tagsTech"></div>
 
-    <h2>🤝 Qualités Humaines</h2>
+    <h2>🤝 Savoir-Être</h2>
     <select id="selHum" onchange="addTag('hum', this)"></select>
     <div class="input-group">
-        <input type="text" id="customHum" placeholder="Autre qualité...">
+        <input type="text" id="customHum" placeholder="Autre savoir-être...">
         <button class="btn-add" onclick="addCustomTag('hum')">+</button>
     </div>
     <div id="tagsHum"></div>
 
-    <h2>💼 Expériences (3 max)</h2>
+    <h2>💼 Expériences Professionnelles</h2>
     <div id="exp-inputs">
         <textarea class="exp-in" placeholder="Intitulé du poste&#10;Détails de l'expérience" oninput="update()" rows="2"></textarea>
         <textarea class="exp-in" placeholder="Intitulé du poste&#10;Détails de l'expérience" oninput="update()" rows="2"></textarea>
         <textarea class="exp-in" placeholder="Intitulé du poste&#10;Détails de l'expérience" oninput="update()" rows="2"></textarea>
     </div>
 
-    <h2>🎓 Formations (3 max)</h2>
+    <h2>🎓 Formations</h2>
     <div id="edu-inputs">
         <textarea class="edu-in" placeholder="Nom du diplôme&#10;École et Année" oninput="update()" rows="2"></textarea>
         <textarea class="edu-in" placeholder="Nom du diplôme&#10;École et Année" oninput="update()" rows="2"></textarea>
@@ -141,7 +142,6 @@
         }
     }
 
-    // Fonction pour mettre la première ligne en gras 
     function formatLines(text) {
         if (!text) return "";
         const lines = text.split('\n');
@@ -158,20 +158,21 @@
             <div style="display:flex; align-items:center; border-bottom:3px solid #3498db; padding-bottom:15px; margin-bottom:15px;">
                 ${photoData ? `<img src="${photoData}" style="width:80px; height:80px; border-radius:50%; object-fit:cover; margin-right:20px; border:2px solid #3498db;">` : ''}
                 <div style="flex:1;">
-                    <h1 style="margin:0; font-size:1.8em;">${document.getElementById('nom').value || 'Prénom NOM'}</h1> <p style="margin:2px 0; font-size:0.9em; color:#555;">${document.getElementById('tel').value} | ${document.getElementById('email').value}</p>
+                    <h1 style="margin:0; font-size:1.8em;">${document.getElementById('nom').value || 'Prénom NOM'}</h1>
+                    <p style="margin:2px 0; font-size:0.9em; color:#555;">${document.getElementById('tel').value} | ${document.getElementById('email').value}</p>
                     <p style="margin:0; font-size:0.8em;">${document.getElementById('adresse').value}</p>
                 </div>
             </div>
             <div style="background:#3498db; color:white; padding:6px 15px; display:inline-block; border-radius:4px; font-weight:bold; margin-bottom:15px;">${document.getElementById('metier').value || 'MÉTIER'}</div>
             <p style="font-style:italic; border-left:3px solid #3498db; padding-left:10px; margin-bottom:15px; font-size:0.95em;">${document.getElementById('profil').value}</p>
             <div class="grid">
-                <div><h2>Compétences</h2><ul style="padding-left:15px; font-size:0.85em;">${selectedSkills.tech.map(t => `<li>${t}</li>`).join('')}</ul></div>
-                <div><h2>Qualités</h2><div style="display:flex; flex-wrap:wrap; gap:5px;">${selectedSkills.hum.map(h => `<span style="border:1px solid #ddd; padding:3px 8px; border-radius:4px; font-size:0.8em;">${h}</span>`).join('')}</div></div>
+                <div><h2>Savoir-Faire</h2><ul style="padding-left:15px; font-size:0.85em;">${selectedSkills.tech.map(t => `<li>${t}</li>`).join('')}</ul></div>
+                <div><h2>Savoir-Être</h2><div style="margin-top:5px;">${selectedSkills.hum.map(h => `<span class="be-item">• ${h}</span>`).join('')}</div></div>
             </div>
             <h2>Expériences Professionnelles</h2>
-            <div style="font-size:0.9em;">${experiences.map(e => `<div class="cv-item-text" style="margin-bottom:8px;">• ${formatLines(e)}</div>`).join('')}</div>
+            <div style="font-size:0.9em;">${experiences.map(e => `<div class="cv-item-text" style="margin-bottom:12px;">${formatLines(e)}</div>`).join('')}</div>
             <h2>Formations</h2>
-            <div style="font-size:0.9em;">${formations.map(f => `<div class="cv-item-text" style="margin-bottom:8px;">• ${formatLines(f)}</div>`).join('')}</div>
+            <div style="font-size:0.9em;">${formations.map(f => `<div class="cv-item-text" style="margin-bottom:12px;">${formatLines(f)}</div>`).join('')}</div>
             ${document.getElementById('interets').value ? `<h2>Centres d'intérêt</h2><p style="font-size:0.9em;">${document.getElementById('interets').value}</p>` : ''}
         `;
         
