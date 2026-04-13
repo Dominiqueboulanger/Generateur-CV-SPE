@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Assistant CV SPE Professionnel</title>
+    <title>Assistant CV SPE Professionnel - Version Bêta</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --blue: #3498db; --bg: #f4f7f6; --text: #2c3e50; --green: #27ae60; --orange: #e67e22; }
@@ -23,9 +23,10 @@
         .tag { background: #e1f0fa; color: var(--blue); padding: 3px 10px; border-radius: 15px; font-size: 10px; margin: 2px; display: inline-flex; align-items: center; border: 1px solid var(--blue); }
         .tag b { margin-left: 6px; cursor: pointer; color: #e74c3c; }
         
-        /* Styles du CV */
-        .cv-item-text b { font-weight: 700; display: block; margin-bottom: 2px; }
-        .be-item { font-size: 0.85em; margin-bottom: 4px; display: block; } /* Savoir-Être sans bordure */
+        /* Styles de rendu CV */
+        .cv-item-title { font-weight: 700; display: block; margin-bottom: 2px; }
+        .be-item { font-size: 0.85em; margin-bottom: 4px; display: block; color: var(--text); }
+        .cv-block { margin-bottom: 12px; }
 
         @media print { .no-print { display: none !important; } body { padding: 0; background: white; display: block; } .preview-side { background: white; padding: 0; width: 100%; height: auto; overflow: visible; } #cv-paper { box-shadow: none; margin: 0; width: 100%; height: 297mm; padding: 10mm; font-size: 10pt; } }
     </style>
@@ -66,16 +67,16 @@
 
     <h2>💼 Expériences Professionnelles</h2>
     <div id="exp-inputs">
-        <textarea class="exp-in" placeholder="Intitulé du poste&#10;Détails de l'expérience" oninput="update()" rows="2"></textarea>
-        <textarea class="exp-in" placeholder="Intitulé du poste&#10;Détails de l'expérience" oninput="update()" rows="2"></textarea>
-        <textarea class="exp-in" placeholder="Intitulé du poste&#10;Détails de l'expérience" oninput="update()" rows="2"></textarea>
+        <textarea class="exp-in" placeholder="Ex: Garde d'enfants (en gras)&#10;Détails de l'expérience" oninput="update()" rows="2"></textarea>
+        <textarea class="exp-in" placeholder="Ex: Employé de maison (en gras)&#10;Détails de l'expérience" oninput="update()" rows="2"></textarea>
+        <textarea class="exp-in" placeholder="Ex: Stage (en gras)&#10;Détails de l'expérience" oninput="update()" rows="2"></textarea>
     </div>
 
     <h2>🎓 Formations</h2>
     <div id="edu-inputs">
-        <textarea class="edu-in" placeholder="Nom du diplôme&#10;École et Année" oninput="update()" rows="2"></textarea>
-        <textarea class="edu-in" placeholder="Nom du diplôme&#10;École et Année" oninput="update()" rows="2"></textarea>
-        <textarea class="edu-in" placeholder="Nom du diplôme&#10;École et Année" oninput="update()" rows="2"></textarea>
+        <textarea class="edu-in" placeholder="Ex: Titre Professionnel (en gras)&#10;École et Année" oninput="update()" rows="2"></textarea>
+        <textarea class="edu-in" placeholder="Ex: DELF (en gras)&#10;Organisme et Année" oninput="update()" rows="2"></textarea>
+        <textarea class="edu-in" placeholder="Ex: Autre formation (en gras)&#10;Lieu et Année" oninput="update()" rows="2"></textarea>
     </div>
 
     <h2>🎨 Centres d'intérêt</h2>
@@ -145,8 +146,8 @@
     function formatLines(text) {
         if (!text) return "";
         const lines = text.split('\n');
-        if (lines.length === 1) return `<b>${lines[0]}</b>`;
-        return `<b>${lines[0]}</b><br>${lines.slice(1).join('<br>')}`;
+        if (lines.length === 1) return `<span class="cv-item-title">${lines[0]}</span>`;
+        return `<span class="cv-item-title">${lines[0]}</span>${lines.slice(1).join('<br>')}`;
     }
 
     function update() {
@@ -170,9 +171,9 @@
                 <div><h2>Savoir-Être</h2><div style="margin-top:5px;">${selectedSkills.hum.map(h => `<span class="be-item">• ${h}</span>`).join('')}</div></div>
             </div>
             <h2>Expériences Professionnelles</h2>
-            <div style="font-size:0.9em;">${experiences.map(e => `<div class="cv-item-text" style="margin-bottom:12px;">${formatLines(e)}</div>`).join('')}</div>
+            <div style="font-size:0.9em;">${experiences.map(e => `<div class="cv-block">${formatLines(e)}</div>`).join('')}</div>
             <h2>Formations</h2>
-            <div style="font-size:0.9em;">${formations.map(f => `<div class="cv-item-text" style="margin-bottom:12px;">${formatLines(f)}</div>`).join('')}</div>
+            <div style="font-size:0.9em;">${formations.map(f => `<div class="cv-block">${formatLines(f)}</div>`).join('')}</div>
             ${document.getElementById('interets').value ? `<h2>Centres d'intérêt</h2><p style="font-size:0.9em;">${document.getElementById('interets').value}</p>` : ''}
         `;
         
