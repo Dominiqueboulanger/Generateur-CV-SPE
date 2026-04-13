@@ -20,45 +20,20 @@
         .btn-print { background: var(--green); grid-column: span 2; font-size: 1.1em; padding: 15px; }
         .btn-save { background: var(--blue); }
         .btn-load { background: var(--orange); }
-        .btn-model { background: var(--purple); grid-column: span 2; }
+        .btn-model { background: var(--purple); grid-column: span 2; margin-bottom: 10px; }
         .tag { background: #e1f0fa; color: var(--blue); padding: 3px 10px; border-radius: 15px; font-size: 10px; margin: 2px; display: inline-flex; align-items: center; border: 1px solid var(--blue); }
         .tag b { margin-left: 6px; cursor: pointer; color: #e74c3c; }
         .cv-item-title { font-weight: 700; display: block; margin-bottom: 2px; }
         .be-item { font-size: 0.85em; margin-bottom: 4px; display: block; }
         .cv-block { margin-bottom: 12px; }
+
         @media print {
-    /* Masque les éléments inutiles du formulaire */
-    .no-print { display: none !important; }
-
-    /* Supprime les en-têtes et pieds de page par défaut du navigateur (URL, date, titre) */
-    @page {
-        margin: 0;
-    }
-    
-    body {
-        padding: 0;
-        margin: 0;
-        background: white;
-        display: block;
-    }
-
-    .preview-side {
-        background: white;
-        padding: 0;
-        width: 100%;
-        height: auto;
-        overflow: visible;
-    }
-
-    #cv-paper {
-        box-shadow: none;
-        margin: 0 auto; /* Centre le CV sur la page */
-        width: 210mm;
-        height: 297mm;
-        padding: 10mm;
-        font-size: 10pt;
-    }
-}
+            .no-print { display: none !important; }
+            @page { margin: 0; }
+            body { padding: 0; margin: 0; background: white; display: block; }
+            .preview-side { background: white; padding: 0; width: 100%; height: auto; overflow: visible; }
+            #cv-paper { box-shadow: none; margin: 0 auto; width: 210mm; height: 297mm; padding: 10mm; font-size: 10pt; }
+        }
     </style>
 </head>
 <body>
@@ -99,16 +74,16 @@
 
     <h2>💼 Expériences Professionnelles</h2>
     <div id="exp-inputs">
-        <textarea class="exp-in" placeholder="Intitulé du poste&#10;Détails" oninput="update()" rows="2"></textarea>
-        <textarea class="exp-in" placeholder="Intitulé du poste&#10;Détails" oninput="update()" rows="2"></textarea>
-        <textarea class="exp-in" placeholder="Intitulé du poste&#10;Détails" oninput="update()" rows="2"></textarea>
+        <textarea class="exp-in" placeholder="Intitulé du poste (en gras)&#10;Détails" oninput="update()" rows="2"></textarea>
+        <textarea class="exp-in" placeholder="Intitulé du poste (en gras)&#10;Détails" oninput="update()" rows="2"></textarea>
+        <textarea class="exp-in" placeholder="Intitulé du poste (en gras)&#10;Détails" oninput="update()" rows="2"></textarea>
     </div>
 
     <h2>🎓 Formations</h2>
     <div id="edu-inputs">
-        <textarea class="edu-in" placeholder="Diplôme&#10;École et Année" oninput="update()" rows="2"></textarea>
-        <textarea class="edu-in" placeholder="Diplôme&#10;École et Année" oninput="update()" rows="2"></textarea>
-        <textarea class="edu-in" placeholder="Diplôme&#10;École et Année" oninput="update()" rows="2"></textarea>
+        <textarea class="edu-in" placeholder="Diplôme (en gras)&#10;École et Année" oninput="update()" rows="2"></textarea>
+        <textarea class="edu-in" placeholder="Diplôme (en gras)&#10;École et Année" oninput="update()" rows="2"></textarea>
+        <textarea class="edu-in" placeholder="Diplôme (en gras)&#10;École et Année" oninput="update()" rows="2"></textarea>
     </div>
 
     <h2>🎨 Centres d'intérêt</h2>
@@ -140,10 +115,15 @@
     async function loadRemoteModel() {
         if(confirm("Cela remplacera vos saisies actuelles par le modèle type. Continuer ?")) {
             try {
-                const response = await fetch('modele_cv.json?v=' + Date.now());
+                // Ajout du ./ pour forcer la recherche dans le dossier courant sur GitHub Pages
+                const response = await fetch('./modele_cv.json?v=' + Date.now());
+                if (!response.ok) throw new Error("Fichier non trouvé");
                 const d = await response.json();
                 applyDataToForm(d);
-            } catch(e) { alert("Le fichier modele_cv.json est introuvable sur le serveur."); }
+            } catch(e) { 
+                alert("Le fichier modele_cv.json est introuvable sur le serveur."); 
+                console.error(e);
+            }
         }
     }
 
@@ -159,9 +139,9 @@
         selectedSkills.hum = d.hum || [];
         photoData = d.photo || '';
         const expIn = document.querySelectorAll('.exp-in');
-        d.exp.forEach((val, i) => { if(expIn[i]) expIn[i].value = val; });
+        if(d.exp) d.exp.forEach((val, i) => { if(expIn[i]) expIn[i].value = val; });
         const eduIn = document.querySelectorAll('.edu-in');
-        d.edu.forEach((val, i) => { if(eduIn[i]) eduIn[i].value = val; });
+        if(d.edu) d.edu.forEach((val, i) => { if(eduIn[i]) eduIn[i].value = val; });
         loadSkills();
         update();
     }
@@ -205,8 +185,8 @@
     function formatLines(text) {
         if (!text) return "";
         const lines = text.split('\n');
-        if (lines.length === 1) return `<span class="cv-item-title">${lines[0]}</span>`;
-        return `<span class="cv-item-title">${lines[0]}</span>${lines.slice(1).join('<br>')}`;
+        const title = `<span class="cv-item-title">${lines[0]}</span>`;
+        return lines.length === 1 ? title : `${title}${lines.slice(1).join('<br>')}`;
     }
 
     function update() {
