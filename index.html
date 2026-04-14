@@ -11,15 +11,15 @@
         .form-side { width: 40%; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); height: 95vh; overflow-y: auto; }
         .preview-side { width: 60%; background: #525659; padding: 20px; display: flex; justify-content: center; height: 95vh; overflow: auto; border-radius: 8px; }
         
-        #cv-paper { width: 210mm; min-height: 297mm; background: white; padding: 12mm; box-sizing: border-box; box-shadow: 0 0 20px rgba(0,0,0,0.5); font-size: 11pt; line-height: 1.3; }
+        #cv-paper { width: 210mm; min-height: 297mm; background: white; padding: 10mm 12mm; box-sizing: border-box; box-shadow: 0 0 20px rgba(0,0,0,0.5); font-size: 10.5pt; line-height: 1.25; }
         
-        h2 { font-size: 1.1em; color: var(--main-color); border-bottom: 2px solid var(--main-color); margin: 15px 0 8px 0; text-transform: uppercase; }
-        .cv-badge { background: var(--main-color); color: white; padding: 6px 15px; display: inline-block; border-radius: 4px; font-weight: bold; margin-bottom: 15px; }
-        .cv-header-line { border-bottom: 3px solid var(--main-color); padding-bottom: 15px; margin-bottom: 15px; }
-        .cv-quote { border-left: 3px solid var(--main-color); padding-left: 10px; margin-bottom: 15px; font-size: 0.95em; font-style: italic; }
+        h2 { font-size: 1.1em; color: var(--main-color); border-bottom: 2px solid var(--main-color); margin: 12px 0 6px 0; text-transform: uppercase; }
+        .cv-badge { background: var(--main-color); color: white; padding: 5px 15px; display: inline-block; border-radius: 4px; font-weight: bold; margin-bottom: 12px; }
+        .cv-header-line { border-bottom: 3px solid var(--main-color); padding-bottom: 12px; margin-bottom: 12px; }
+        .cv-quote { border-left: 3px solid var(--main-color); padding-left: 10px; margin-bottom: 12px; font-size: 0.9em; font-style: italic; color: #444; }
 
         input, select, textarea { width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; font-size: 0.9em; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .btn-zone { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
         .btn { border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; text-align: center; text-decoration: none; }
         .btn-print { background: var(--green-btn); grid-column: span 2; font-size: 1.1em; padding: 15px; }
@@ -31,14 +31,14 @@
         .tag b { margin-left: 6px; cursor: pointer; color: #e74c3c; }
         
         .cv-item-title { font-weight: 700; display: block; margin-bottom: 0px; }
-        .be-item { font-size: 0.85em; margin-bottom: 4px; display: block; }
+        .be-item { font-size: 0.85em; margin-bottom: 3px; display: block; }
 
         @media print {
             .no-print { display: none !important; }
-            @page { margin: 0; }
+            @page { size: A4; margin: 0; }
             body { padding: 0; margin: 0; background: white; display: block; }
             .preview-side { background: white; padding: 0; width: 100%; height: auto; overflow: visible; }
-            #cv-paper { box-shadow: none; margin: 0 auto; width: 210mm; height: 297mm; padding: 10mm; font-size: 10pt; }
+            #cv-paper { box-shadow: none; margin: 0; width: 210mm; height: 297mm; padding: 10mm; font-size: 10pt; overflow: hidden; }
         }
     </style>
 </head>
@@ -70,7 +70,7 @@
             <select id="photo-size" onchange="update()">
                 <option value="60">Petite (60px)</option>
                 <option value="85" selected>Moyenne (85px)</option>
-                <option value="150">Grande (150px)</option>
+                <option value="110">Grande (110px)</option>
             </select>
         </div>
     </div>
@@ -78,6 +78,9 @@
     <input type="text" id="nom" placeholder="Prénom NOM" oninput="update()">
     <div class="grid"><input type="text" id="tel" placeholder="Téléphone" oninput="update()"><input type="text" id="email" placeholder="Email" oninput="update()"></div>
     <textarea id="adresse" placeholder="Adresse" oninput="update()"></textarea>
+
+    <h2>🌍 Langues</h2>
+    <input type="text" id="langues" placeholder="Français (maternel), Anglais (notions)..." oninput="update()">
 
     <h2>🎯 Métier & Accroche</h2>
     <select id="metier" onchange="loadSkills()">
@@ -92,7 +95,7 @@
     <select id="selTech" onchange="addTag('tech', this)"></select>
     <div class="input-group">
         <input type="text" id="customTech" placeholder="Autre savoir-faire...">
-        <button class="btn-add" style="background:#333; color:white; border:none; padding:8px; border-radius:5px;" onclick="addCustomTag('tech')">+</button>
+        <button onclick="addCustomTag('tech')">+</button>
     </div>
     <div id="tagsTech"></div>
 
@@ -100,7 +103,7 @@
     <select id="selHum" onchange="addTag('hum', this)"></select>
     <div class="input-group">
         <input type="text" id="customHum" placeholder="Autre savoir-être...">
-        <button class="btn-add" style="background:#333; color:white; border:none; padding:8px; border-radius:5px;" onclick="addCustomTag('hum')">+</button>
+        <button onclick="addCustomTag('hum')">+</button>
     </div>
     <div id="tagsHum"></div>
 
@@ -113,7 +116,6 @@
 
     <h2>🎓 Formations</h2>
     <div id="edu-inputs">
-        <textarea class="edu-in" placeholder="Diplôme (en gras)&#10;École et Année" oninput="update()" rows="2"></textarea>
         <textarea class="edu-in" placeholder="Diplôme (en gras)&#10;École et Année" oninput="update()" rows="2"></textarea>
         <textarea class="edu-in" placeholder="Diplôme (en gras)&#10;École et Année" oninput="update()" rows="2"></textarea>
     </div>
@@ -149,21 +151,12 @@
         update();
     }
 
-    async function loadRemoteModel() {
-        if(confirm("Charger le modèle exemple ?")) {
-            try {
-                const response = await fetch('./modele_cv.json?v=' + Date.now());
-                const d = await response.json();
-                applyDataToForm(d);
-            } catch(e) { alert("modele_cv.json introuvable."); }
-        }
-    }
-
     function applyDataToForm(d) {
         document.getElementById('nom').value = d.nom || '';
         document.getElementById('tel').value = d.tel || '';
         document.getElementById('email').value = d.email || '';
         document.getElementById('adresse').value = d.adresse || '';
+        document.getElementById('langues').value = d.langues || '';
         document.getElementById('metier').value = d.metier || '';
         document.getElementById('profil').value = d.profil || '';
         document.getElementById('interets').value = d.interets || '';
@@ -217,7 +210,6 @@
         const lines = text.split('\n');
         const title = `<span class="cv-item-title">${lines[0]}</span>`;
         if (lines.length === 1) return title;
-        
         const rest = lines.slice(1).join('<br>').replace(/\.\s+/g, '.<br>');
         return `${title}${rest}`; 
     }
@@ -226,31 +218,42 @@
         const paper = document.getElementById('cv-paper');
         const experiences = Array.from(document.querySelectorAll('.exp-in')).map(i => i.value).filter(v => v);
         const formations = Array.from(document.querySelectorAll('.edu-in')).map(i => i.value).filter(v => v);
-        
-        // Récupération de la taille choisie
         const size = document.getElementById('photo-size').value;
+        const langues = document.getElementById('langues').value;
+        const profil = document.getElementById('profil').value;
+        const interets = document.getElementById('interets').value;
 
         paper.innerHTML = `
             <div class="cv-header-line" style="display:flex; align-items:center;">
                 ${photoData ? `<img src="${photoData}" style="width:${size}px; height:${size}px; border-radius:50%; object-fit:cover; margin-right:20px; border:2px solid var(--main-color);">` : ''}
                 <div style="flex:1;">
                     <h1 style="margin:0; font-size:1.8em;">${document.getElementById('nom').value || 'Prénom NOM'}</h1>
-                    <p style="margin:2px 0; font-size:0.9em; color:#555;">${document.getElementById('tel').value} | ${document.getElementById('email').value}</p>
+                    <p style="margin:2px 0; font-size:0.9em; color:#555;">${document.getElementById('tel').value} ${document.getElementById('tel').value && document.getElementById('email').value ? '|' : ''} ${document.getElementById('email').value}</p>
                     <p style="margin:0; font-size:0.8em;">${document.getElementById('adresse').value}</p>
                 </div>
             </div>
+            
             <div class="cv-badge">${document.getElementById('metier').value || 'MÉTIER'}</div>
-            <p class="cv-quote">${document.getElementById('profil').value}</p>
+            
+            ${profil ? `<p class="cv-quote">${profil}</p>` : ''}
+            
             <div class="grid">
-                <div><h2>Savoir-Faire</h2><ul style="padding-left:15px; font-size:0.85em;">${selectedSkills.tech.map(t => `<li>${t}</li>`).join('')}</ul></div>
-                <div><h2>Savoir-Être</h2><div style="margin-top:5px;">${selectedSkills.hum.map(h => `<span class="be-item">• ${h}</span>`).join('')}</div></div>
+                <div>
+                    ${selectedSkills.tech.length > 0 ? `<h2>Savoir-Faire</h2><ul style="padding-left:15px; font-size:0.85em; margin:0;">${selectedSkills.tech.map(t => `<li>${t}</li>`).join('')}</ul>` : ''}
+                </div>
+                <div>
+                    ${selectedSkills.hum.length > 0 ? `<h2>Savoir-Être</h2><div style="margin-top:5px;">${selectedSkills.hum.map(h => `<span class="be-item">• ${h}</span>`).join('')}</div>` : ''}
+                    ${langues ? `<h2 style="margin-top:10px;">Langues</h2><p style="font-size:0.85em; margin:0;">${langues}</p>` : ''}
+                </div>
             </div>
-            <h2>Expériences Professionnelles</h2>
-            <div style="font-size:0.9em;">${experiences.map(e => `<div style="margin-bottom:12px;">${formatLines(e)}</div>`).join('')}</div>
-            <h2>Formations</h2>
-            <div style="font-size:0.9em;">${formations.map(f => `<div style="margin-bottom:12px;">${formatLines(f)}</div>`).join('')}</div>
-            ${document.getElementById('interets').value ? `<h2>Centres d'intérêt</h2><p style="font-size:0.9em;">${document.getElementById('interets').value}</p>` : ''}
+            
+            ${experiences.length > 0 ? `<h2>Expériences Professionnelles</h2><div style="font-size:0.9em;">${experiences.map(e => `<div style="margin-bottom:10px;">${formatLines(e)}</div>`).join('')}</div>` : ''}
+            
+            ${formations.length > 0 ? `<h2>Formations</h2><div style="font-size:0.9em;">${formations.map(f => `<div style="margin-bottom:8px;">${formatLines(f)}</div>`).join('')}</div>` : ''}
+            
+            ${interets ? `<h2>Centres d'intérêt</h2><p style="font-size:0.9em; margin:0;">${interets}</p>` : ''}
         `;
+        
         document.getElementById('tagsTech').innerHTML = selectedSkills.tech.map(t => `<span class="tag">${t}<b onclick="selectedSkills.tech=selectedSkills.tech.filter(x=>x!=='${t}');update()">✕</b></span>`).join('');
         document.getElementById('tagsHum').innerHTML = selectedSkills.hum.map(h => `<span class="tag">${h}<b onclick="selectedSkills.hum=selectedSkills.hum.filter(x=>x!=='${h}');update()">✕</b></span>`).join('');
     }
@@ -259,9 +262,9 @@
         const fullData = {
             nom: document.getElementById('nom').value, tel: document.getElementById('tel').value,
             email: document.getElementById('email').value, adresse: document.getElementById('adresse').value,
-            metier: document.getElementById('metier').value, profil: document.getElementById('profil').value,
-            interets: document.getElementById('interets').value, tech: selectedSkills.tech, hum: selectedSkills.hum,
-            photoSize: document.getElementById('photo-size').value,
+            langues: document.getElementById('langues').value, metier: document.getElementById('metier').value, 
+            profil: document.getElementById('profil').value, interets: document.getElementById('interets').value, 
+            tech: selectedSkills.tech, hum: selectedSkills.hum, photoSize: document.getElementById('photo-size').value,
             exp: Array.from(document.querySelectorAll('.exp-in')).map(i => i.value),
             edu: Array.from(document.querySelectorAll('.edu-in')).map(i => i.value), photo: photoData
         };
