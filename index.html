@@ -2,259 +2,161 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Assistant CV SPE Professionnel - Version Couleurs</title>
+    <title>Assistant CV SPE Professionnel - Version Épurée</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --main-color: #3498db; --bg: #f4f7f6; --text: #2c3e50; --green-btn: #27ae60; --orange: #e67e22; --purple: #9b59b6; }
         body { font-family: 'Montserrat', sans-serif; background: var(--bg); margin: 0; padding: 20px; display: flex; gap: 20px; color: var(--text); }
-        
         .form-side { width: 40%; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); height: 95vh; overflow-y: auto; }
         .preview-side { width: 60%; background: #525659; padding: 20px; display: flex; justify-content: center; height: 95vh; overflow: auto; border-radius: 8px; }
-        
-        #cv-paper { width: 210mm; min-height: 297mm; background: white; padding: 12mm; box-sizing: border-box; box-shadow: 0 0 20px rgba(0,0,0,0.5); font-size: 11pt; line-height: 1.3; }
-        
-        /* Styles dynamiques basés sur --main-color */
-        h2 { font-size: 1.1em; color: var(--main-color); border-bottom: 2px solid var(--main-color); margin: 15px 0 8px 0; text-transform: uppercase; }
+        #cv-paper { width: 210mm; min-height: 297mm; background: white; padding: 12mm; box-sizing: border-box; box-shadow: 0 0 20px rgba(0,0,0,0.5); font-size: 10.5pt; line-height: 1.4; }
+        h2 { font-size: 1.1em; color: var(--main-color); border-bottom: 2px solid var(--main-color); margin: 18px 0 10px 0; text-transform: uppercase; letter-spacing: 1px; }
         .cv-badge { background: var(--main-color); color: white; padding: 6px 15px; display: inline-block; border-radius: 4px; font-weight: bold; margin-bottom: 15px; }
         .cv-header-line { border-bottom: 3px solid var(--main-color); padding-bottom: 15px; margin-bottom: 15px; }
-        .cv-quote { border-left: 3px solid var(--main-color); padding-left: 10px; margin-bottom: 15px; font-size: 0.95em; font-style: italic; }
-
-        /* Interface */
-        input, select, textarea { width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; font-size: 0.9em; }
+        .cv-quote { border-left: 3px solid var(--main-color); padding-left: 12px; margin-bottom: 20px; font-size: 0.95em; font-style: italic; color: #555; }
+        input, select, textarea { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; font-size: 0.9em; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .btn-zone { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .btn { border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; text-align: center; text-decoration: none; }
-        .btn-print { background: var(--green-btn); grid-column: span 2; font-size: 1.1em; padding: 15px; }
-        .btn-save { background: #34495e; }
-        .btn-load { background: var(--orange); }
+        .btn { border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; text-align: center; }
+        .btn-print { background: var(--green-btn); grid-column: span 2; font-size: 1.1em; }
         .btn-model { background: var(--purple); grid-column: span 2; margin-bottom: 10px; }
-        
-        .tag { background: #f0f0f0; color: #333; padding: 3px 10px; border-radius: 15px; font-size: 10px; margin: 2px; display: inline-flex; align-items: center; border: 1px solid #ccc; }
-        .tag b { margin-left: 6px; cursor: pointer; color: #e74c3c; }
-        .cv-item-title { font-weight: 700; display: block; margin-bottom: 2px; }
-        .be-item { font-size: 0.85em; margin-bottom: 4px; display: block; }
-
+        .tag { background: #f0f0f0; color: #333; padding: 4px 10px; border-radius: 15px; font-size: 10px; margin: 2px; display: inline-flex; align-items: center; border: 1px solid #ccc; }
+        .cv-item-title { font-weight: 700; font-size: 1.05em; color: #333; margin-bottom: 3px; display: block; }
+        .cv-item-content { margin-left: 2px; text-align: justify; }
+        .cv-item-content ul { margin: 5px 0; padding-left: 18px; }
+        .cv-item-content li { margin-bottom: 2px; }
         @media print {
             .no-print { display: none !important; }
             @page { margin: 0; }
-            body { padding: 0; margin: 0; background: white; display: block; }
-            .preview-side { background: white; padding: 0; width: 100%; height: auto; overflow: visible; }
-            #cv-paper { box-shadow: none; margin: 0 auto; width: 210mm; height: 297mm; padding: 10mm; font-size: 10pt; }
+            body { padding: 0; margin: 0; background: white; }
+            .preview-side { background: white; padding: 0; width: 100%; }
+            #cv-paper { box-shadow: none; margin: 0; width: 210mm; height: 297mm; padding: 10mm; }
         }
     </style>
 </head>
 <body>
-
 <div class="form-side no-print">
-    <div style="background: #eee; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-        <label><b>🎨 Couleur du thème :</b></label>
-        <select id="color-picker" onchange="updateColor(this.value)" style="margin-top:5px; font-weight:bold;">
-            <option value="#3498db">Bleu (Classique)</option>
-            <option value="#2c3e50">Bleu Marine</option>
-            <option value="#e74c3c">Rouge</option>
-            <option value="#800000">Bordeaux</option>
-            <option value="#1b4d3e">Vert Foncé</option>
-            <option value="#6c5ce7">Violet</option>
+    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #e9ecef;">
+        <label><b>🎨 Choix de la couleur :</b></label>
+        <select id="color-picker" onchange="updateColor(this.value)" style="margin-top:5px;">
+            <option value="#3498db">Bleu Azur</option>
+            <option value="#2c3e50">Bleu Nuit</option>
+            <option value="#e74c3c">Rouge Passion</option>
+            <option value="#800000">Bordeaux Classique</option>
+            <option value="#1b4d3e">Vert Forêt</option>
+            <option value="#6c5ce7">Violet Moderne</option>
         </select>
     </div>
-
-    <button class="btn btn-model" onclick="loadRemoteModel()">📋 Charger le modèle (Exemple)</button>
-    
+    <button class="btn btn-model" onclick="loadRemoteModel()">📋 Charger l'exemple complet</button>
     <h2>👤 État Civil</h2>
     <input type="file" id="photo-input" accept="image/*" onchange="handlePhoto(event)">
     <input type="text" id="nom" placeholder="Prénom NOM" oninput="update()">
     <div class="grid"><input type="text" id="tel" placeholder="Téléphone" oninput="update()"><input type="text" id="email" placeholder="Email" oninput="update()"></div>
-    <textarea id="adresse" placeholder="Adresse" oninput="update()"></textarea>
-
+    <textarea id="adresse" placeholder="Adresse complète" oninput="update()"></textarea>
     <h2>🎯 Métier & Accroche</h2>
     <select id="metier" onchange="loadSkills()">
-        <option value="">-- Choisir le métier --</option>
+        <option value="">-- Sélectionner le métier --</option>
         <option value="Garde d'enfants">Garde d'enfants</option>
         <option value="ADVD">Assistant de Vie (ADVD)</option>
         <option value="Employé Familial">Employé Familial</option>
     </select>
-    <textarea id="profil" placeholder="Phrase d'accroche..." oninput="update()"></textarea>
-
+    <textarea id="profil" placeholder="Décrivez votre motivation..." oninput="update()"></textarea>
     <h2>🛠️ Savoir-Faire</h2>
     <select id="selTech" onchange="addTag('tech', this)"></select>
-    <div class="input-group">
-        <input type="text" id="customTech" placeholder="Autre savoir-faire...">
-        <button class="btn-add" style="background:#333; color:white; border:none; padding:8px; border-radius:5px;" onclick="addCustomTag('tech')">+</button>
-    </div>
-    <div id="tagsTech"></div>
-
-    <h2>🤝 Savoir-Être</h2>
-    <select id="selHum" onchange="addTag('hum', this)"></select>
-    <div class="input-group">
-        <input type="text" id="customHum" placeholder="Autre savoir-être...">
-        <button class="btn-add" style="background:#333; color:white; border:none; padding:8px; border-radius:5px;" onclick="addCustomTag('hum')">+</button>
-    </div>
-    <div id="tagsHum"></div>
-
+    <div id="tagsTech" style="margin-bottom:10px;"></div>
     <h2>💼 Expériences Professionnelles</h2>
     <div id="exp-inputs">
-        <textarea class="exp-in" placeholder="Poste (en gras)&#10;Détails" oninput="update()" rows="2"></textarea>
-        <textarea class="exp-in" placeholder="Poste (en gras)&#10;Détails" oninput="update()" rows="2"></textarea>
-        <textarea class="exp-in" placeholder="Poste (en gras)&#10;Détails" oninput="update()" rows="2"></textarea>
+        <textarea class="exp-in" placeholder="Titre du poste (Ligne 1)&#10;- Mission 1&#10;- Mission 2" oninput="update()" rows="4"></textarea>
+        <textarea class="exp-in" placeholder="Titre du poste (Ligne 1)&#10;- Mission 1" oninput="update()" rows="3"></textarea>
+        <textarea class="exp-in" placeholder="Titre du poste (Ligne 1)" oninput="update()" rows="2"></textarea>
     </div>
-
     <h2>🎓 Formations</h2>
     <div id="edu-inputs">
-        <textarea class="edu-in" placeholder="Diplôme (en gras)&#10;École et Année" oninput="update()" rows="2"></textarea>
-        <textarea class="edu-in" placeholder="Diplôme (en gras)&#10;École et Année" oninput="update()" rows="2"></textarea>
-        <textarea class="edu-in" placeholder="Diplôme (en gras)&#10;École et Année" oninput="update()" rows="2"></textarea>
+        <textarea class="edu-in" placeholder="Diplôme ou Titre (Ligne 1)&#10;Organisme et date" oninput="update()" rows="2"></textarea>
+        <textarea class="edu-in" placeholder="Diplôme ou Titre" oninput="update()" rows="2"></textarea>
     </div>
-
-    <h2>🎨 Centres d'intérêt</h2>
-    <input type="text" id="interets" placeholder="Loisirs..." oninput="update()">
-
     <div class="btn-zone">
-        <button class="btn btn-save" onclick="saveData()">💾 Sauvegarder</button>
-        <button class="btn btn-load" onclick="document.getElementById('load-file').click()">📂 Reprendre</button>
+        <button class="btn" style="background:#34495e" onclick="saveData()">💾 Sauvegarder</button>
+        <button class="btn" style="background:var(--orange)" onclick="document.getElementById('load-file').click()">📂 Charger</button>
         <input type="file" id="load-file" style="display:none" accept=".json" onchange="loadData(event)">
-        <button class="btn btn-print" onclick="window.print()">🖨️ GÉNÉRER LE PDF</button>
+        <button class="btn btn-print" onclick="window.print()">🖨️ GÉNÉRER LE PDF PRÊT À ENVOYER</button>
     </div>
 </div>
-
 <div class="preview-side"><div id="cv-paper"></div></div>
-
 <script>
-    let repoData = {};
-    let selectedSkills = { tech: [], hum: [] };
-    let photoData = "";
-
-    function updateColor(val) {
-        document.documentElement.style.setProperty('--main-color', val);
-        update();
+    let repoData = {}; let selectedSkills = { tech: [] }; let photoData = "";
+    function updateColor(val) { document.documentElement.style.setProperty('--main-color', val); update(); }
+    async function init() { 
+        try { const r = await fetch('competences_SPE_par_metier.json?v=' + Date.now()); repoData = await r.json(); } catch(e) {} 
+        update(); 
     }
-
-    async function init() {
-        try {
-            const response = await fetch('competences_SPE_par_metier.json?v=' + Date.now());
-            repoData = await response.json();
-        } catch(e) { console.error("Erreur référentiel"); }
-        update();
-    }
-
     async function loadRemoteModel() {
-        if(confirm("Charger le modèle exemple ?")) {
-            try {
-                const response = await fetch('./modele_cv.json?v=' + Date.now());
-                const d = await response.json();
-                applyDataToForm(d);
-            } catch(e) { alert("modele_cv.json introuvable."); }
+        if(confirm("Remplacer par l'exemple ?")) {
+            try { const r = await fetch('./modele_cv.json?v=' + Date.now()); const d = await r.json(); applyDataToForm(d); } catch(e) {}
         }
     }
-
     function applyDataToForm(d) {
-        document.getElementById('nom').value = d.nom || '';
-        document.getElementById('tel').value = d.tel || '';
-        document.getElementById('email').value = d.email || '';
-        document.getElementById('adresse').value = d.adresse || '';
-        document.getElementById('metier').value = d.metier || '';
-        document.getElementById('profil').value = d.profil || '';
-        document.getElementById('interets').value = d.interets || '';
-        selectedSkills.tech = d.tech || [];
-        selectedSkills.hum = d.hum || [];
-        photoData = d.photo || '';
-        const expIn = document.querySelectorAll('.exp-in');
-        if(d.exp) d.exp.forEach((val, i) => { if(expIn[i]) expIn[i].value = val; });
-        const eduIn = document.querySelectorAll('.edu-in');
-        if(d.edu) d.edu.forEach((val, i) => { if(eduIn[i]) eduIn[i].value = val; });
-        loadSkills();
-        update();
+        document.getElementById('nom').value = d.nom || ''; document.getElementById('tel').value = d.tel || '';
+        document.getElementById('email').value = d.email || ''; document.getElementById('adresse').value = d.adresse || '';
+        document.getElementById('metier').value = d.metier || ''; document.getElementById('profil').value = d.profil || '';
+        selectedSkills.tech = d.tech || []; photoData = d.photo || '';
+        const expIn = document.querySelectorAll('.exp-in'); if(d.exp) d.exp.forEach((v, i) => { if(expIn[i]) expIn[i].value = v; });
+        const eduIn = document.querySelectorAll('.edu-in'); if(d.edu) d.edu.forEach((v, i) => { if(eduIn[i]) eduIn[i].value = v; });
+        loadSkills(); update();
     }
-
-    function handlePhoto(e) {
-        const reader = new FileReader();
-        reader.onload = () => { photoData = reader.result; update(); };
-        reader.readAsDataURL(e.target.files[0]);
-    }
-
+    function handlePhoto(e) { const reader = new FileReader(); reader.onload = () => { photoData = reader.result; update(); }; reader.readAsDataURL(e.target.files[0]); }
     function loadSkills() {
-        const m = document.getElementById('metier').value;
-        const sT = document.getElementById('selTech');
-        const sH = document.getElementById('selHum');
-        sT.innerHTML = sH.innerHTML = '<option value="">-- Sélectionner --</option>';
-        if(m && repoData[m]) {
-            repoData[m].Techniques.forEach(t => sT.innerHTML += `<option value="${t}">${t}</option>`);
-            repoData[m].Humaines.forEach(h => sH.innerHTML += `<option value="${h}">${h}</option>`);
-        }
+        const m = document.getElementById('metier').value; const sT = document.getElementById('selTech');
+        sT.innerHTML = '<option value="">+ Ajouter un savoir-faire</option>';
+        if(m && repoData[m]) repoData[m].Techniques.forEach(t => sT.innerHTML += `<option value="${t}">${t}</option>`);
         update();
     }
-
-    function addTag(type, el) {
-        if(el.value && !selectedSkills[type].includes(el.value)) {
-            selectedSkills[type].push(el.value); update();
-        }
-        el.value = "";
-    }
-
-    function addCustomTag(type) {
-        const id = type === 'tech' ? 'customTech' : 'customHum';
-        const val = document.getElementById(id).value.trim();
-        if(val && !selectedSkills[type].includes(val)) {
-            selectedSkills[type].push(val); document.getElementById(id).value = ""; update();
-        }
-    }
-
-    function formatLines(text) {
-        if (!text) return "";
-        const lines = text.split('\n');
+    function addTag(type, el) { if(el.value && !selectedSkills[type].includes(el.value)) { selectedSkills[type].push(el.value); update(); } el.value = ""; }
+    function formatText(text) {
+        if (!text) return ""; const lines = text.split('\n');
         const title = `<span class="cv-item-title">${lines[0]}</span>`;
-        return lines.length === 1 ? title : `${title}${lines.slice(1).join('<br>')}`;
+        if (lines.length === 1) return title;
+        let content = '<div class="cv-item-content">'; let inList = false;
+        for (let i = 1; i < lines.length; i++) {
+            let line = lines[i].trim();
+            if (line.startsWith('-') || line.startsWith('•') || line.startsWith('*')) {
+                if (!inList) { content += '<ul>'; inList = true; }
+                content += `<li>${line.substring(1).trim()}</li>`;
+            } else { if (inList) { content += '</ul>'; inList = false; } content += line + '<br>'; }
+        }
+        if (inList) content += '</ul>'; content += '</div>'; return title + content;
     }
-
     function update() {
         const paper = document.getElementById('cv-paper');
-        const experiences = Array.from(document.querySelectorAll('.exp-in')).map(i => i.value).filter(v => v);
-        const formations = Array.from(document.querySelectorAll('.edu-in')).map(i => i.value).filter(v => v);
-
+        const exp = Array.from(document.querySelectorAll('.exp-in')).map(i => i.value).filter(v => v);
+        const edu = Array.from(document.querySelectorAll('.edu-in')).map(i => i.value).filter(v => v);
         paper.innerHTML = `
             <div class="cv-header-line" style="display:flex; align-items:center;">
-                ${photoData ? `<img src="${photoData}" style="width:80px; height:80px; border-radius:50%; object-fit:cover; margin-right:20px; border:2px solid var(--main-color);">` : ''}
+                ${photoData ? `<img src="${photoData}" style="width:85px; height:85px; border-radius:50%; object-fit:cover; margin-right:25px; border:2px solid var(--main-color);">` : ''}
                 <div style="flex:1;">
-                    <h1 style="margin:0; font-size:1.8em;">${document.getElementById('nom').value || 'Prénom NOM'}</h1>
-                    <p style="margin:2px 0; font-size:0.9em; color:#555;">${document.getElementById('tel').value} | ${document.getElementById('email').value}</p>
-                    <p style="margin:0; font-size:0.8em;">${document.getElementById('adresse').value}</p>
+                    <h1 style="margin:0; font-size:1.9em;">${document.getElementById('nom').value || 'PRÉNOM NOM'}</h1>
+                    <p style="margin:4px 0; font-size:0.95em;"><b>${document.getElementById('tel').value}</b> | ${document.getElementById('email').value}</p>
+                    <p style="margin:0; font-size:0.85em; color:#666;">${document.getElementById('adresse').value}</p>
                 </div>
             </div>
-            <div class="cv-badge">${document.getElementById('metier').value || 'MÉTIER'}</div>
+            <div class="cv-badge">${document.getElementById('metier').value || 'VOTRE MÉTIER'}</div>
             <p class="cv-quote">${document.getElementById('profil').value}</p>
-            <div class="grid">
-                <div><h2>Savoir-Faire</h2><ul style="padding-left:15px; font-size:0.85em;">${selectedSkills.tech.map(t => `<li>${t}</li>`).join('')}</ul></div>
-                <div><h2>Savoir-Être</h2><div style="margin-top:5px;">${selectedSkills.hum.map(h => `<span class="be-item">• ${h}</span>`).join('')}</div></div>
+            <h2>Compétences clés</h2>
+            <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+                ${selectedSkills.tech.map(t => `<span style="border:1px solid var(--main-color); padding:4px 10px; border-radius:4px; font-size:0.85em;">${t}</span>`).join('')}
             </div>
             <h2>Expériences Professionnelles</h2>
-            <div style="font-size:0.9em;">${experiences.map(e => `<div style="margin-bottom:12px;">${formatLines(e)}</div>`).join('')}</div>
+            ${exp.map(e => `<div style="margin-bottom:15px;">${formatText(e)}</div>`).join('')}
             <h2>Formations</h2>
-            <div style="font-size:0.9em;">${formations.map(f => `<div style="margin-bottom:12px;">${formatLines(f)}</div>`).join('')}</div>
-            ${document.getElementById('interets').value ? `<h2>Centres d'intérêt</h2><p style="font-size:0.9em;">${document.getElementById('interets').value}</p>` : ''}
+            ${edu.map(f => `<div style="margin-bottom:12px;">${formatText(f)}</div>`).join('')}
         `;
-        document.getElementById('tagsTech').innerHTML = selectedSkills.tech.map(t => `<span class="tag">${t}<b onclick="selectedSkills.tech=selectedSkills.tech.filter(x=>x!=='${t}');update()">✕</b></span>`).join('');
-        document.getElementById('tagsHum').innerHTML = selectedSkills.hum.map(h => `<span class="tag">${h}<b onclick="selectedSkills.hum=selectedSkills.hum.filter(x=>x!=='${h}');update()">✕</b></span>`).join('');
+        document.getElementById('tagsTech').innerHTML = selectedSkills.tech.map(t => `<span class="tag">${t}<b onclick="selectedSkills.tech=selectedSkills.tech.filter(x=>x!=='${t}');update()" style="margin-left:5px;cursor:pointer;">✕</b></span>`).join('');
     }
-
     function saveData() {
-        const fullData = {
-            nom: document.getElementById('nom').value, tel: document.getElementById('tel').value,
-            email: document.getElementById('email').value, adresse: document.getElementById('adresse').value,
-            metier: document.getElementById('metier').value, profil: document.getElementById('profil').value,
-            interets: document.getElementById('interets').value, tech: selectedSkills.tech, hum: selectedSkills.hum,
-            exp: Array.from(document.querySelectorAll('.exp-in')).map(i => i.value),
-            edu: Array.from(document.querySelectorAll('.edu-in')).map(i => i.value), photo: photoData
-        };
-        const blob = new Blob([JSON.stringify(fullData)], {type: 'application/json'});
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-        a.download = `cv_${fullData.nom.replace(/\s/g, '_') || 'brouillon'}.json`; a.click();
+        const d = { nom: document.getElementById('nom').value, tel: document.getElementById('tel').value, email: document.getElementById('email').value, adresse: document.getElementById('adresse').value, metier: document.getElementById('metier').value, profil: document.getElementById('profil').value, tech: selectedSkills.tech, exp: Array.from(document.querySelectorAll('.exp-in')).map(i => i.value), edu: Array.from(document.querySelectorAll('.edu-in')).map(i => i.value), photo: photoData };
+        const b = new Blob([JSON.stringify(d)], {type: 'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `cv_${d.nom || 'brouillon'}.json`; a.click();
     }
-
-    function loadData(event) {
-        const reader = new FileReader();
-        reader.onload = (e) => { applyDataToForm(JSON.parse(e.target.result)); };
-        reader.readAsText(event.target.files[0]);
-    }
-
+    function loadData(event) { const r = new FileReader(); r.onload = (e) => applyDataToForm(JSON.parse(e.target.result)); r.readAsText(event.target.files[0]); }
     window.onload = init;
 </script>
 </body>
