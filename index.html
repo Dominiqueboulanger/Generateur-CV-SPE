@@ -169,11 +169,10 @@
             const response = await fetch('competences_SPE_par_metier.json?v=' + Date.now());
             repoData = await response.json();
         } catch(e) { console.error("Erreur référentiel"); }
-        update(); // Le point-virgule est maintenant bien en place
+        update();
     }
 
     function applyDataToForm(d) {
-        // Corps de la fonction rétabli
         document.getElementById('nom').value = d.nom || '';
         document.getElementById('tel').value = d.tel || '';
         document.getElementById('email').value = d.email || '';
@@ -188,6 +187,7 @@
         selectedSkills.hum = d.hum || [];
         photoData = d.photo || '';
 
+        // Chargement des nouveaux blocs complexes
         const expIn = document.querySelectorAll('#exp-inputs > div');
         if (d.exp && Array.isArray(d.exp)) {
             d.exp.forEach((dataArray, i) => {
@@ -209,78 +209,63 @@
         }
         loadSkills();
         update();
-    } // <-- Fermeture correcte ajoutée
-
-    function update() {
-        // ... (votre code complet d'update)
-    } 
-
-    // L'appel update() en dehors de toute fonction a été supprimé
-
-    function addTag(type, el) {
-        if(el.value && !selectedSkills[type].includes(el.value)) {
-            selectedSkills[type].push(el.value); update();
-        }
-        el.value = "";
-    }
-
-    function addCustomTag(type) {
-        const id = type === 'tech' ? 'customTech' : 'customHum';
-        const val = document.getElementById(id).value.trim();
-        if(val && !selectedSkills[type].includes(val)) {
-            selectedSkills[type].push(val); document.getElementById(id).value = ""; update();
-        }
-    }
-
-    function formatLines(text) {
-        if (!text) return "";
-        const lines = text.split('\n');
-        const title = `<span class="cv-item-title">${lines[0]}</span>`;
-        if (lines.length === 1) return title;
-        const rest = lines.slice(1).join('<br>').replace(/\.\s+/g, '.<br>');
-        return `${title}${rest}`; 
     }
 
     function update() {
         const paper = document.getElementById('cv-paper');
-        const experiences = Array.from(document.querySelectorAll('.exp-in')).map(i => i.value).filter(v => v);
-        const formations = Array.from(document.querySelectorAll('.edu-in')).map(i => i.value).filter(v => v);
         const size = document.getElementById('photo-size').value;
         const profil = document.getElementById('profil').value;
         const interets = document.getElementById('interets').value;
         const langues = document.getElementById('langues').value;
+
+        // Génération HTML Expériences
+        let expHtml = "";
+        document.querySelectorAll('#exp-inputs > div').forEach(div => {
+            const inp = div.querySelectorAll('input, textarea');
+            if (inp[0].value) {
+                expHtml += `<div style="margin-bottom:10px;">
+                    <span class="cv-item-title"><b>${inp[1].value}</b> (${inp[0].value})</span>
+                    <span style="font-size:0.9em; display:block;">${inp[2].value}</span>
+                    <span style="font-size:0.9em; display:block;">${inp[3].value}</span>
+                </div>`;
+            }
+        });
+
+        // Génération HTML Formations
+        let eduHtml = "";
+        document.querySelectorAll('#edu-inputs > div').forEach(div => {
+            const inp = div.querySelectorAll('input, select, textarea');
+            const titre = (inp[2].tagName === 'SELECT') ? inp[2].options[inp[2].selectedIndex].text : inp[2].value;
+            if (inp[0].value) {
+                eduHtml += `<div style="margin-bottom:8px;">
+                    <span class="cv-item-title"><b>${titre}</b></span>
+                    <span style="font-size:0.9em; display:block;">${inp[1].value} - ${inp[0].value}</span>
+                    <span style="font-size:0.9em; display:block;">${inp[3].value}</span>
+                </div>`;
+            }
+        });
 
         paper.innerHTML = `
             <div class="cv-header-line" style="display:flex; align-items:center;">
                 ${photoData ? `<img src="${photoData}" style="width:${size}px; height:${size}px; border-radius:50%; object-fit:cover; margin-right:20px; border:2px solid var(--main-color);">` : ''}
                 <div style="flex:1;">
                     <h1 style="margin:0; font-size:1.8em;">${document.getElementById('nom').value || 'Prénom NOM'}</h1>
-                    <p style="margin:2px 0; font-size:0.9em; color:#555;">${document.getElementById('tel').value} ${document.getElementById('tel').value && document.getElementById('email').value ? '|' : ''} ${document.getElementById('email').value}</p>
+                    <p style="margin:2px 0; font-size:0.9em; color:#555;">${document.getElementById('tel').value} | ${document.getElementById('email').value}</p>
                     <p style="margin:0; font-size:0.8em;">${document.getElementById('adresse').value}</p>
                 </div>
             </div>
-            
             <div class="cv-badge">${document.getElementById('metier').value || 'MÉTIER'}</div>
-            
             ${profil ? `<p class="cv-quote">${profil}</p>` : ''}
             
             <div class="grid">
-                <div>
-                    ${selectedSkills.tech.length > 0 ? `<h2>Savoir-Faire</h2><ul style="padding-left:15px; font-size:0.85em; margin:0;">${selectedSkills.tech.map(t => `<li>${t}</li>`).join('')}</ul>` : ''}
-                </div>
-                <div>
-                    ${selectedSkills.hum.length > 0 ? `<h2>Compétences Sociales</h2><div style="margin-top:5px;">${selectedSkills.hum.map(h => `<span class="be-item">• ${h}</span>`).join('')}</div>` : ''}
-                    ${langues ? `<h2 style="margin-top:10px;">Langues</h2><p style="font-size:0.85em; margin:0;">${langues}</p>` : ''}
-                </div>
+                <div>${selectedSkills.tech.length > 0 ? `<h2>Savoir-Faire</h2><ul style="padding-left:15px; font-size:0.85em; margin:0;">${selectedSkills.tech.map(t => `<li>${t}</li>`).join('')}</ul>` : ''}</div>
+                <div>${selectedSkills.hum.length > 0 ? `<h2>Compétences Sociales</h2><div style="margin-top:5px;">${selectedSkills.hum.map(h => `<span class="be-item">• ${h}</span>`).join('')}</div>` : ''}
+                ${langues ? `<h2 style="margin-top:10px;">Langues</h2><p style="font-size:0.85em; margin:0;">${langues}</p>` : ''}</div>
             </div>
-            
-            ${experiences.length > 0 ? `<h2>Expériences Professionnelles</h2><div style="font-size:0.9em;">${experiences.map(e => `<div style="margin-bottom:10px;">${formatLines(e)}</div>`).join('')}</div>` : ''}
-            
-            ${formations.length > 0 ? `<h2>Formations</h2><div style="font-size:0.9em;">${formations.map(f => `<div style="margin-bottom:8px;">${formatLines(f)}</div>`).join('')}</div>` : ''}
-            
+            ${expHtml ? `<h2>Expériences Professionnelles</h2>${expHtml}` : ''}
+            ${eduHtml ? `<h2>Formations</h2>${eduHtml}` : ''}
             ${interets ? `<h2>Centres d'intérêt</h2><p style="font-size:0.9em; margin:0;">${interets}</p>` : ''}
         `;
-        
         document.getElementById('tagsTech').innerHTML = selectedSkills.tech.map(t => `<span class="tag">${t}<b onclick="selectedSkills.tech=selectedSkills.tech.filter(x=>x!=='${t}');update()">✕</b></span>`).join('');
         document.getElementById('tagsHum').innerHTML = selectedSkills.hum.map(h => `<span class="tag">${h}<b onclick="selectedSkills.hum=selectedSkills.hum.filter(x=>x!=='${h}');update()">✕</b></span>`).join('');
     }
@@ -292,8 +277,9 @@
             langues: document.getElementById('langues').value, metier: document.getElementById('metier').value, 
             profil: document.getElementById('profil').value, interets: document.getElementById('interets').value, 
             tech: selectedSkills.tech, hum: selectedSkills.hum, photoSize: document.getElementById('photo-size').value,
-            exp: Array.from(document.querySelectorAll('.exp-in')).map(i => i.value),
-            edu: Array.from(document.querySelectorAll('.edu-in')).map(i => i.value), photo: photoData
+            photo: photoData,
+            exp: Array.from(document.querySelectorAll('#exp-inputs > div')).map(div => Array.from(div.querySelectorAll('input, textarea')).map(i => i.value)),
+            edu: Array.from(document.querySelectorAll('#edu-inputs > div')).map(div => Array.from(div.querySelectorAll('input, select, textarea')).map(i => i.value))
         };
         const blob = new Blob([JSON.stringify(fullData)], {type: 'application/json'});
         const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
