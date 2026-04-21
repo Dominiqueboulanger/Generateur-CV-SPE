@@ -6,43 +6,36 @@
     <style>
         body { font-family: sans-serif; display: flex; gap: 20px; padding: 20px; background: #f4f7f6; }
         .form-side { width: 40%; background: white; padding: 20px; border-radius: 12px; }
-        #cv-paper { width: 210mm; background: white; padding: 10mm; border: 1px solid #ccc; }
-        .exp-block { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; }
+        .preview-side { width: 60%; background: #525659; padding: 20px; }
+        #cv-paper { width: 210mm; min-height: 297mm; background: white; padding: 10mm; }
+        input, textarea, select { width: 100%; margin-bottom: 10px; padding: 8px; }
     </style>
 </head>
 <body>
 <div class="form-side">
-    <h2>🎯 Accroche</h2>
-    <textarea id="profil" placeholder="Phrase d'accroche..." oninput="update()" style="font-size: 1.2em; font-weight: bold;"></textarea>
-
-    <h2>💼 Expériences</h2>
-    <div id="exp-container">
-        <div class="exp-block">
-            <input type="text" class="exp-date" placeholder="Dates (de... à...)" oninput="update()">
-            <input type="text" class="exp-poste" placeholder="Métier (en gras)" oninput="update()">
-            <input type="text" class="exp-lieu" placeholder="Lieu d'exercice" oninput="update()">
-            <textarea class="exp-desc" placeholder="Description des tâches" oninput="update()"></textarea>
-        </div>
-    </div>
+    <h2>👤 État Civil</h2>
+    <input type="text" id="nom" placeholder="Nom" oninput="update()">
+    <input type="text" id="tel" placeholder="Téléphone" oninput="update()">
+    <input type="text" id="email" placeholder="Email" oninput="update()">
+    <input type="text" id="langues" placeholder="Langues" oninput="update()">
+    <h2>🎯 Métier</h2>
+    <select id="metier" onchange="update()">
+        <option value="Garde">Garde d'enfants</option>
+        <option value="ADVD">ADVD</option>
+    </select>
+    <textarea id="profil" placeholder="Accroche..." oninput="update()"></textarea>
     <button onclick="saveData()">💾 Sauvegarder</button>
 </div>
-<div id="cv-paper"></div>
-
+<div class="preview-side"><div id="cv-paper"></div></div>
 <script>
     function update() {
         const paper = document.getElementById('cv-paper');
-        const profil = document.getElementById('profil').value;
-        const block = document.querySelector('.exp-block');
-        
-        paper.innerHTML = `
-            <h2 style="font-size: 1.5em; border-bottom: 2px solid #333;">${profil}</h2>
-            <h3>Expérience :</h3>
-            <p><b>${block.querySelector('.exp-date').value}</b> - <b>${block.querySelector('.exp-poste').value}</b><br>
-            <i>${block.querySelector('.exp-lieu').value}</i><br>
-            ${block.querySelector('.exp-desc').value}</p>
-        `;
+        paper.innerHTML = `<h1>${document.getElementById('nom').value}</h1><p>${document.getElementById('metier').value}</p>`;
     }
-    function saveData() { alert("Sauvegarde en cours..."); }
+    function saveData() {
+        const data = { nom: document.getElementById('nom').value, metier: document.getElementById('metier').value };
+        console.log(JSON.stringify(data));
+    }
 </script>
 </body>
 </html>
