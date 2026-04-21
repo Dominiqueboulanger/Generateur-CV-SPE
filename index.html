@@ -190,6 +190,8 @@
 
     function loadSkills() {
         const m = document.getElementById('metier').value;
+        console.log("Valeur sélectionnée :", m); 
+        console.log("Données trouvées pour ce métier :", repoData[m]);
         const sT = document.getElementById('selTech');
         const sH = document.getElementById('selHum');
         sT.innerHTML = sH.innerHTML = '<option value="">-- Sélectionner --</option>';
