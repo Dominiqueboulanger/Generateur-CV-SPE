@@ -120,18 +120,40 @@
     </div>
     <div id="tagsHum"></div>
 
-    <h2>💼 Expériences Professionnelles</h2>
+   <h2>💼 Expériences Professionnelles</h2>
     <div id="exp-inputs">
-        <textarea class="exp-in" placeholder="Poste (en gras)&#10;Détails" oninput="update()" rows="2"></textarea>
-        <textarea class="exp-in" placeholder="Poste (en gras)&#10;Détails" oninput="update()" rows="2"></textarea>
-        <textarea class="exp-in" placeholder="Poste (en gras)&#10;Détails" oninput="update()" rows="2"></textarea>
+        <div style="border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; border-radius: 6px;">
+            <input type="text" class="exp-in" placeholder="Dates (ex: 2024-2025)" oninput="update()">
+            <input type="text" class="exp-in" placeholder="Métier (en gras)" oninput="update()">
+            <input type="text" class="exp-in" placeholder="Lieu d'exercice" oninput="update()">
+            <textarea class="exp-in" placeholder="Description des tâches" oninput="update()" rows="2"></textarea>
+        </div>
     </div>
 
     <h2>🎓 Formations</h2>
-    <div id="edu-inputs">
-        <textarea class="edu-in" placeholder="Diplôme (en gras)&#10;École et Année" oninput="update()" rows="2"></textarea>
-        <textarea class="edu-in" placeholder="Diplôme (en gras)&#10;École et Année" oninput="update()" rows="2"></textarea>
+<div id="edu-inputs">
+    <div style="border: 2px solid var(--main-color); padding: 10px; margin-bottom: 10px; border-radius: 6px;">
+        <input type="text" class="edu-in" placeholder="Année" oninput="update()">
+        <input type="text" class="edu-in" placeholder="Organisme de formation" oninput="update()">
+        <select id="selModules" onchange="update()">
+            <option value="">-- Choisir un module (métier) --</option>
+        </select>
+        <textarea class="edu-in" placeholder="Description de la formation" oninput="update()" rows="2"></textarea>
     </div>
+    
+    <div style="border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; border-radius: 6px;">
+        <input type="text" class="edu-in" placeholder="Année" oninput="update()">
+        <input type="text" class="edu-in" placeholder="Organisme" oninput="update()">
+        <input type="text" class="edu-in" placeholder="Intitulé" oninput="update()">
+        <textarea class="edu-in" placeholder="Description" oninput="update()" rows="2"></textarea>
+    </div>
+    <div style="border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; border-radius: 6px;">
+        <input type="text" class="edu-in" placeholder="Année" oninput="update()">
+        <input type="text" class="edu-in" placeholder="Organisme" oninput="update()">
+        <input type="text" class="edu-in" placeholder="Intitulé" oninput="update()">
+        <textarea class="edu-in" placeholder="Description" oninput="update()" rows="2"></textarea>
+    </div>
+</div>
 
     <h2>🎨 Centres d'intérêt</h2>
     <input type="text" id="interets" placeholder="Loisirs..." oninput="update()">
