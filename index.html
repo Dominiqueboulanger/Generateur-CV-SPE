@@ -335,8 +335,12 @@
             langues: document.getElementById('langues').value, metier: document.getElementById('metier').value, 
             profil: document.getElementById('profil').value, interets: document.getElementById('interets').value, 
             tech: selectedSkills.tech, hum: selectedSkills.hum, photoSize: document.getElementById('photo-size').value,
-            exp: Array.from(document.querySelectorAll('.exp-in')).map(i => i.value),
-            edu: Array.from(document.querySelectorAll('.edu-in')).map(i => i.value), photo: photoData
+            exp: Array.from(document.querySelectorAll('#exp-inputs > div')).map(div => {
+            return Array.from(div.querySelectorAll('input, textarea')).map(i => i.value);
+        }),
+        edu: Array.from(document.querySelectorAll('#edu-inputs > div')).map(div => {
+            return Array.from(div.querySelectorAll('input, select, textarea')).map(i => i.value);
+        })
         };
         const blob = new Blob([JSON.stringify(fullData)], {type: 'application/json'});
         const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
