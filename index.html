@@ -2,312 +2,40 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Assistant CV SPE Professionnel - Version Couleurs Second</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Assistant CV SPE</title>
     <style>
-        :root { --main-color: #3498db; --bg: #f4f7f6; --text: #2c3e50; --green-btn: #27ae60; --orange: #e67e22; --purple: #9b59b6; }
-        body { font-family: 'Montserrat', sans-serif; background: var(--bg); margin: 0; padding: 20px; display: flex; gap: 20px; color: var(--text); }
-        
-        .form-side { width: 40%; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); height: 95vh; overflow-y: auto; }
-        .preview-side { width: 60%; background: #525659; padding: 20px; display: flex; justify-content: center; height: 95vh; overflow: auto; border-radius: 8px; }
-        
-        #cv-paper { width: 210mm; min-height: 297mm; background: white; padding: 10mm 12mm; box-sizing: border-box; box-shadow: 0 0 20px rgba(0,0,0,0.5); font-size: 10.5pt; line-height: 1.25; }
-        
-        h2 { font-size: 1.1em; color: var(--main-color); border-bottom: 2px solid var(--main-color); margin: 12px 0 6px 0; text-transform: uppercase; }
-        .cv-badge { background: var(--main-color); color: white; padding: 5px 15px; display: inline-block; border-radius: 4px; font-weight: bold; margin-bottom: 12px; }
-        .cv-header-line { border-bottom: 3px solid var(--main-color); padding-bottom: 12px; margin-bottom: 12px; }
-        .cv-quote { border-left: 3px solid var(--main-color); padding-left: 10px; margin-bottom: 12px; font-size: 0.9em; font-style: italic; color: #444; }
-
-        input, select, textarea { width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; font-size: 0.9em; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .btn-zone { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .btn { border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; text-align: center; text-decoration: none; }
-        .btn-print { background: var(--green-btn); grid-column: span 2; font-size: 1.1em; padding: 15px; }
-        .btn-save { background: #34495e; }
-        .btn-load { background: var(--orange); }
-        .btn-model { background: var(--purple); grid-column: span 2; margin-bottom: 10px; }
-        
-        .tag { background: #f0f0f0; color: #333; padding: 3px 10px; border-radius: 15px; font-size: 10px; margin: 2px; display: inline-flex; align-items: center; border: 1px solid #ccc; }
-        .tag b { margin-left: 6px; cursor: pointer; color: #e74c3c; }
-        
-        .cv-item-title { font-weight: 700; display: block; margin-bottom: 0px; }
-        .be-item { font-size: 0.85em; margin-bottom: 3px; display: block; }
-
-        @media print {
-            .no-print { display: none !important; }
-            @page { size: A4; margin: 0; }
-            body { padding: 0; margin: 0; background: white; display: block; }
-            .preview-side { background: white; padding: 0; width: 100%; height: auto; overflow: visible; }
-            #cv-paper { box-shadow: none; margin: 0 auto; width: 210mm; height: 297mm; padding: 10mm; font-size: 10pt; overflow: hidden; }
-        }
+        body { font-family: sans-serif; display: flex; gap: 20px; padding: 20px; background: #f4f7f6; }
+        .form-side { width: 40%; background: white; padding: 20px; border-radius: 12px; }
+        .preview-side { width: 60%; background: #525659; padding: 20px; }
+        #cv-paper { width: 210mm; min-height: 297mm; background: white; padding: 10mm; }
+        input, textarea, select { width: 100%; margin-bottom: 10px; padding: 8px; }
     </style>
 </head>
 <body>
-
-<div class="form-side no-print">
-    <div style="background: #eee; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-        <label><b>🎨 Couleur du thème :</b></label>
-        <select id="color-picker" onchange="updateColor(this.value)" style="margin-top:5px; font-weight:bold;">
-            <option value="#3498db">Bleu (Classique)</option>
-            <option value="#2c3e50">Bleu Marine</option>
-            <option value="#e74c3c">Rouge</option>
-            <option value="#800000">Bordeaux</option>
-            <option value="#1b4d3e">Vert Foncé</option>
-            <option value="#6c5ce7">Violet</option>
-        </select>
-    </div>
-
-    <button class="btn btn-model" onclick="loadRemoteModel()">📋 Charger le modèle (Exemple)</button>
-    
+<div class="form-side">
     <h2>👤 État Civil</h2>
-    <div class="grid">
-        <div>
-            <label style="font-size: 0.8em; font-weight: bold;">Photo :</label>
-            <input type="file" id="photo-input" accept="image/*" onchange="handlePhoto(event)">
-        </div>
-        <div>
-            <label style="font-size: 0.8em; font-weight: bold;">Taille photo :</label>
-            <select id="photo-size" onchange="update()">
-                <option value="60">Petite (60px)</option>
-                <option value="85" selected>Moyenne (85px)</option>
-                <option value="150">Grande (150px)</option>
-            </select>
-        </div>
-    </div>
-    
-    <input type="text" id="nom" placeholder="Prénom NOM" oninput="update()">
-    <div class="grid"><input type="text" id="tel" placeholder="Téléphone" oninput="update()"><input type="text" id="email" placeholder="Email" oninput="update()"></div>
-    <textarea id="adresse" placeholder="Adresse" oninput="update()"></textarea>
-
-    <h2>🌍 Langues</h2>
-    <input type="text" id="langues" placeholder="Ex: Volapuk (maternel), Anglais (A2)..." oninput="update()">
-
-    <h2>🎯 Métier & Accroche</h2>
-    <select id="metier" onchange="loadSkills()">
-        <option value="">-- Choisir le métier --</option>
+    <input type="text" id="nom" placeholder="Nom" oninput="update()">
+    <input type="text" id="tel" placeholder="Téléphone" oninput="update()">
+    <input type="text" id="email" placeholder="Email" oninput="update()">
+    <input type="text" id="langues" placeholder="Langues" oninput="update()">
+    <h2>🎯 Métier</h2>
+    <select id="metier" onchange="update()">
         <option value="Garde">Garde d'enfants</option>
-        <option value="ADVD">Assistant de Vie (ADVD)</option>
-        <option value="EF">Employé Familial</option>
+        <option value="ADVD">ADVD</option>
     </select>
-    <textarea id="profil" placeholder="Phrase d'accroche..." oninput="update()"></textarea>
-
-    <h2>🛠️ Savoir-Faire</h2>
-    <select id="selTech" onchange="addTag('tech', this)"></select>
-    <div class="input-group">
-        <input type="text" id="customTech" placeholder="Autre savoir-faire...">
-        <button class="btn-add" style="background:#333; color:white; border:none; padding:8px; border-radius:5px;" onclick="addCustomTag('tech')">+</button>
-    </div>
-    <div id="tagsTech"></div>
-
-    <h2>🤝 Compétences Sociales</h2>
-    <select id="selHum" onchange="addTag('hum', this)"></select>
-    <div class="input-group">
-        <input type="text" id="customHum" placeholder="Autre compétence sociale...">
-        <button class="btn-add" style="background:#333; color:white; border:none; padding:8px; border-radius:5px;" onclick="addCustomTag('hum')">+</button>
-    </div>
-    <div id="tagsHum"></div>
-
-   <h2>💼 Expériences Professionnelles</h2>
-<div id="exp-inputs">
-    <div style="border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; border-radius: 6px;">
-        <input type="text" class="exp-in" placeholder="Dates (ex: 2024-2025)" oninput="update()">
-        <input type="text" class="exp-in" placeholder="Poste (en gras)" oninput="update()">
-        <input type="text" class="exp-in" placeholder="Lieu d'exercice" oninput="update()">
-        <textarea class="exp-in" placeholder="Description des missions" oninput="update()" rows="2"></textarea>
-    </div>
-    <div style="border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; border-radius: 6px;">
-        <input type="text" class="exp-in" placeholder="Dates" oninput="update()">
-        <input type="text" class="exp-in" placeholder="Poste" oninput="update()">
-        <input type="text" class="exp-in" placeholder="Lieu" oninput="update()">
-        <textarea class="exp-in" placeholder="Description" oninput="update()" rows="2"></textarea>
-    </div>
+    <textarea id="profil" placeholder="Accroche..." oninput="update()"></textarea>
+    <button onclick="saveData()">💾 Sauvegarder</button>
 </div>
-
-<h2>🎓 Formations & Modules</h2>
-<div id="edu-inputs">
-    <div style="border: 2px solid var(--main-color); padding: 10px; margin-bottom: 10px; border-radius: 6px;">
-        <input type="text" class="edu-in" placeholder="Année" oninput="update()">
-        <input type="text" class="edu-in" placeholder="Organisme" oninput="update()">
-        <select id="selModules" onchange="update()">
-            <option value="">-- Choisir un module (lié au métier) --</option>
-        </select>
-        <textarea class="edu-in" placeholder="Détails" oninput="update()" rows="2"></textarea>
-    </div>
-    <div style="border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; border-radius: 6px;">
-        <input type="text" class="edu-in" placeholder="Année" oninput="update()">
-        <input type="text" class="edu-in" placeholder="Organisme" oninput="update()">
-        <input type="text" class="edu-in" placeholder="Intitulé" oninput="update()">
-        <textarea class="edu-in" placeholder="Détails" oninput="update()" rows="2"></textarea>
-    </div>
-</div>
-
-    <h2>🎨 Centres d'intérêt</h2>
-    <input type="text" id="interets" placeholder="Loisirs..." oninput="update()">
-
-    <div class="btn-zone">
-        <button class="btn btn-save" onclick="saveData()">💾 Sauvegarder</button>
-        <button class="btn btn-load" onclick="document.getElementById('load-file').click()">📂 Reprendre</button>
-        <input type="file" id="load-file" style="display:none" accept=".json" onchange="loadData(event)">
-        <button class="btn btn-print" onclick="window.print()">🖨️ GÉNÉRER LE PDF</button>
-    </div>
-</div>
-
 <div class="preview-side"><div id="cv-paper"></div></div>
-
 <script>
-    let repoData = {};
-    let selectedSkills = { tech: [], hum: [] };
-    let photoData = "";
-
-    function updateColor(val) {
-        document.documentElement.style.setProperty('--main-color', val);
-        update();
-    }
-
-    async function init() {
-        try {
-            const response = await fetch('competences_SPE_par_metier.json?v=' + Date.now());
-            repoData = await response.json();
-        } catch(e) { console.error("Erreur référentiel"); }
-        update();
-    }
-
-    function applyDataToForm(d) {
-        document.getElementById('nom').value = d.nom || '';
-        document.getElementById('tel').value = d.tel || '';
-        document.getElementById('email').value = d.email || '';
-        document.getElementById('adresse').value = d.adresse || '';
-        document.getElementById('langues').value = d.langues || '';
-        document.getElementById('metier').value = d.metier || '';
-        document.getElementById('profil').value = d.profil || '';
-        document.getElementById('interets').value = d.interets || '';
-        if(d.photoSize) document.getElementById('photo-size').value = d.photoSize;
-        selectedSkills.tech = d.tech || [];
-        selectedSkills.hum = d.hum || [];
-        photoData = d.photo || '';
-        const expIn = document.querySelectorAll('#exp-inputs > div');
-        if (d.exp && Array.isArray(d.exp)) {
-            d.exp.forEach((dataArray, i) => {
-                if (expIn[i]) {
-                    const inputs = expIn[i].querySelectorAll('input, textarea');
-                    dataArray.forEach((val, index) => { if (inputs[index]) inputs[index].value = val; });
-                }
-            });
-        }
-        const eduIn = document.querySelectorAll('#edu-inputs > div');
-        if (d.edu && Array.isArray(d.edu)) {
-            d.edu.forEach((dataArray, i) => {
-                if (eduIn[i]) {
-                    const inputs = eduIn[i].querySelectorAll('input, select, textarea');
-                    dataArray.forEach((val, index) => { if (inputs[index]) inputs[index].value = val; });
-                }
-            });
-        }
-        loadSkills();
-        update();
-    }
-
     function update() {
         const paper = document.getElementById('cv-paper');
-        const size = document.getElementById('photo-size').value;
-        const profil = document.getElementById('profil').value;
-        const interets = document.getElementById('interets').value;
-        const langues = document.getElementById('langues').value;
-        let expHtml = "";
-        document.querySelectorAll('#exp-inputs > div').forEach(div => {
-            const inp = div.querySelectorAll('input, textarea');
-            if (inp[0].value) {
-                expHtml += `<div style="margin-bottom:10px;"><span class="cv-item-title"><b>${inp[1].value}</b> (${inp[0].value})</span><span style="font-size:0.9em; display:block;">${inp[2].value}</span><span style="font-size:0.9em; display:block;">${inp[3].value}</span></div>`;
-            }
-        });
-        let eduHtml = "";
-        document.querySelectorAll('#edu-inputs > div').forEach(div => {
-            const inp = div.querySelectorAll('input, select, textarea');
-            const titre = (inp[2].tagName === 'SELECT') ? inp[2].options[inp[2].selectedIndex].text : inp[2].value;
-            if (inp[0].value) {
-                eduHtml += `<div style="margin-bottom:8px;"><span class="cv-item-title"><b>${titre}</b></span><span style="font-size:0.9em; display:block;">${inp[1].value} - ${inp[0].value}</span><span style="font-size:0.9em; display:block;">${inp[3].value}</span></div>`;
-            }
-        });
-        paper.innerHTML = `
-            <div class="cv-header-line" style="display:flex; align-items:center;">
-                ${photoData ? `<img src="${photoData}" style="width:${size}px; height:${size}px; border-radius:50%; object-fit:cover; margin-right:20px; border:2px solid var(--main-color);">` : ''}
-                <div style="flex:1;">
-                    <h1 style="margin:0; font-size:1.8em;">${document.getElementById('nom').value || 'Prénom NOM'}</h1>
-                    <p style="margin:2px 0; font-size:0.9em; color:#555;">${document.getElementById('tel').value} | ${document.getElementById('email').value}</p>
-                    <p style="margin:0; font-size:0.8em;">${document.getElementById('adresse').value}</p>
-                </div>
-            </div>
-            <div class="cv-badge">${document.getElementById('metier').value || 'MÉTIER'}</div>
-            ${profil ? `<p class="cv-quote">${profil}</p>` : ''}
-            <div class="grid">
-                <div>${selectedSkills.tech.length > 0 ? `<h2>Savoir-Faire</h2><ul style="padding-left:15px; font-size:0.85em; margin:0;">${selectedSkills.tech.map(t => `<li>${t}</li>`).join('')}</ul>` : ''}</div>
-                <div>${selectedSkills.hum.length > 0 ? `<h2>Compétences Sociales</h2><div style="margin-top:5px;">${selectedSkills.hum.map(h => `<span class="be-item">• ${h}</span>`).join('')}</div>` : ''}
-                ${langues ? `<h2 style="margin-top:10px;">Langues</h2><p style="font-size:0.85em; margin:0;">${langues}</p>` : ''}</div>
-            </div>
-            ${expHtml ? `<h2>Expériences Professionnelles</h2>${expHtml}` : ''}
-            ${eduHtml ? `<h2>Formations</h2>${eduHtml}` : ''}
-            ${interets ? `<h2>Centres d'intérêt</h2><p style="font-size:0.9em; margin:0;">${interets}</p>` : ''}
-        `;
-        document.getElementById('tagsTech').innerHTML = selectedSkills.tech.map(t => `<span class="tag">${t}<b onclick="selectedSkills.tech=selectedSkills.tech.filter(x=>x!=='${t}');update()">✕</b></span>`).join('');
-        document.getElementById('tagsHum').innerHTML = selectedSkills.hum.map(h => `<span class="tag">${h}<b onclick="selectedSkills.hum=selectedSkills.hum.filter(x=>x!=='${h}');update()">✕</b></span>`).join('');
+        paper.innerHTML = `<h1>${document.getElementById('nom').value}</h1><p>${document.getElementById('metier').value}</p>`;
     }
-
-    function handlePhoto(e) {
-        const reader = new FileReader();
-        reader.onload = (event) => { photoData = event.target.result; update(); };
-        reader.readAsDataURL(e.target.files[0]);
-    }
-
-    function loadSkills() {
-        const m = document.getElementById('metier').value;
-        if (!m || !repoData[m]) return;
-        document.getElementById('selTech').innerHTML = '<option value="">-- Savoir-Faire --</option>' + repoData[m].tech.map(t => `<option value="${t}">${t}</option>`).join('');
-        document.getElementById('selHum').innerHTML = '<option value="">-- Compétences Sociales --</option>' + repoData[m].hum.map(h => `<option value="${h}">${h}</option>`).join('');
-        const modSelect = document.getElementById('selModules');
-        modSelect.innerHTML = '<option value="">-- Choisir un module --</option>' + repoData[m].modules.map(mod => `<option value="${mod}">${mod}</option>`).join('');
-        update();
-    }
-
-    function addTag(type, el) {
-        if(el.value && !selectedSkills[type].includes(el.value)) { selectedSkills[type].push(el.value); update(); }
-        el.value = "";
-    }
-
-    function addCustomTag(type) {
-        const id = type === 'tech' ? 'customTech' : 'customHum';
-        const val = document.getElementById(id).value.trim();
-        if(val && !selectedSkills[type].includes(val)) { selectedSkills[type].push(val); document.getElementById(id).value = ""; update(); }
-    }
-
-    function loadData(event) {
-        const reader = new FileReader();
-        reader.onload = (e) => { applyDataToForm(JSON.parse(e.target.result)); };
-        reader.readAsText(event.target.files[0]);
-    }
-
     function saveData() {
-        const fullData = {
-            nom: document.getElementById('nom').value, tel: document.getElementById('tel').value,
-            email: document.getElementById('email').value, adresse: document.getElementById('adresse').value,
-            langues: document.getElementById('langues').value, metier: document.getElementById('metier').value, 
-            profil: document.getElementById('profil').value, interets: document.getElementById('interets').value, 
-            tech: selectedSkills.tech, hum: selectedSkills.hum, photoSize: document.getElementById('photo-size').value,
-            photo: photoData,
-            exp: Array.from(document.querySelectorAll('#exp-inputs > div')).map(div => Array.from(div.querySelectorAll('input, textarea')).map(i => i.value)),
-            edu: Array.from(document.querySelectorAll('#edu-inputs > div')).map(div => Array.from(div.querySelectorAll('input, select, textarea')).map(i => i.value))
-        };
-        const blob = new Blob([JSON.stringify(fullData)], {type: 'application/json'});
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-        a.download = `cv_${fullData.nom.replace(/\s/g, '_') || 'brouillon'}.json`; a.click();
+        const data = { nom: document.getElementById('nom').value, metier: document.getElementById('metier').value };
+        console.log(JSON.stringify(data));
     }
-
-    async function loadRemoteModel() {
-        const response = await fetch('modele_cv.json');
-        const data = await response.json();
-        applyDataToForm(data);
-    }
-
-    window.onload = init;
 </script>
 </body>
 </html>
