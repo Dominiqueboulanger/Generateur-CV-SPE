@@ -299,9 +299,24 @@
     const profil = document.getElementById('profil').value;
     const interets = document.getElementById('interets').value;
     const langues = document.getElementById('langues').value;
-    const genre = document.getElementById('genre').value; // 'm' ou 'f'
+    async function update() {
     const selectMetier = document.getElementById('metier');
-    const codeMetier = selectMetier.value;
+    const genre = document.getElementById('genre').value;
+    const codeMetier = selectMetier.value; 
+
+    console.log("--- Début mise à jour ---");
+    console.log("Code métier sélectionné (value) :", codeMetier);
+    console.log("Genre sélectionné :", genre);
+    
+    // Vérifions si le code existe bien dans notre objet chargé
+    if (metiersRef[codeMetier]) {
+        console.log("Libellé trouvé dans JSON :", metiersRef[codeMetier][genre]);
+    } else {
+        console.log("ATTENTION : Aucune correspondance trouvée pour ce code !");
+    }
+    
+    // ... reste de votre code qui affiche le badge
+}
 
     // --- SEULE GESTION DU MÉTIER : Via metiersRef ---
     let metierFinal = "MÉTIER";
