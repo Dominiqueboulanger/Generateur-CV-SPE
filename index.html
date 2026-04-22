@@ -239,11 +239,17 @@
         repoData[m].Techniques.forEach(t => sT.innerHTML += `<option value="${t}">${t}</option>`);
         repoData[m].Humaines.forEach(h => sH.innerHTML += `<option value="${h}">${h}</option>`);
         
-        // Remplissage dynamique des modules
-        if(repoData[m].modules) {
-            repoData[m].modules.forEach(mod => sM.innerHTML += `<option value="${mod}">${mod}</option>`);
+        // Dans loadSkills, remplacez la partie modules par :
+    const allModuleSelects = document.querySelectorAll('.selModules');
+    allModuleSelects.forEach(select => {
+        const currentVal = select.value;
+        select.innerHTML = '<option value="">-- Choisir un module --</option>';
+        if (repoData[m].modules) {
+            repoData[m].modules.forEach(mod => {
+                select.innerHTML += `<option value="${mod}" ${mod === currentVal ? 'selected' : ''}>${mod}</option>`;
+            });
         }
-    }
+    });
     update();
 }
     function addTag(type, el) {
@@ -353,7 +359,20 @@
         reader.onload = (e) => { applyDataToForm(JSON.parse(e.target.result)); };
         reader.readAsText(event.target.files[0]);
     }
-
+    function addEdu() {
+    const container = document.getElementById('edu-inputs');
+    const newGroup = document.createElement('div');
+    newGroup.className = 'edu-group';
+    newGroup.innerHTML = `
+        <textarea class="edu-in" placeholder="Diplôme (en gras)&#10;École et Année" oninput="update()" rows="2"></textarea>
+        <label>Module associé :</label>
+        <select class="selModules" onchange="update()">
+            <option value="">-- Choisir un module --</option>
+        </select>
+    `;
+    container.appendChild(newGroup);
+    loadSkills(); 
+}
     window.onload = init;
 </script>
 </body>
