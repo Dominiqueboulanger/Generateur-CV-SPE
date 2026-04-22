@@ -68,19 +68,22 @@
     
     <h2>👤 État Civil</h2>
     <div class="grid">
-        <div>
-            <label style="font-size: 0.8em; font-weight: bold;">Photo :</label>
-            <input type="file" id="photo-input" accept="image/*" onchange="handlePhoto(event)">
-        </div>
-        <div>
-            <label style="font-size: 0.8em; font-weight: bold;">Taille photo :</label>
-            <select id="photo-size" onchange="update()">
-                <option value="60">Petite (60px)</option>
-                <option value="85" selected>Moyenne (85px)</option>
-                <option value="150">Grande (150px)</option>
-            </select>
-        </div>
+    <div>
+        <label style="font-size: 0.8em; font-weight: bold;">Taille photo :</label>
+        <select id="photo-size" onchange="update()">
+            <option value="60">Petite (60px)</option>
+            <option value="85" selected>Moyenne (85px)</option>
+            <option value="150">Grande (150px)</option>
+        </select>
     </div>
+    <div>
+        <label style="font-size: 0.8em; font-weight: bold;">Genre :</label>
+        <select id="genre" onchange="update()">
+            <option value="f">Femme</option>
+            <option value="m">Homme</option>
+        </select>
+    </div>
+</div>
     
     <input type="text" id="nom" placeholder="Prénom NOM" oninput="update()">
     <div class="grid"><input type="text" id="tel" placeholder="Téléphone" oninput="update()"><input type="text" id="email" placeholder="Email" oninput="update()"></div>
