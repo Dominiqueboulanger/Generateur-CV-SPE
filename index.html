@@ -268,22 +268,14 @@
     const interets = document.getElementById('interets').value;
     const langues = document.getElementById('langues').value;
 
-    // --- Gestion des Formations ---
+    // --- Gestion des Formations (Logique existante) ---
     const eduGroups = document.querySelectorAll('.edu-group');
     let formationsHtml = "";
-    
     eduGroups.forEach(group => {
         const text = group.querySelector('.edu-in').value;
-        // On récupère les tags (les modules ajoutés) dans ce groupe spécifique
-        const tagElements = group.querySelectorAll('.tagsModules .tag');
-        const tags = Array.from(tagElements).map(t => t.innerText.replace('✕', '').trim());
-        
+        const mod = group.querySelector('.selModules').value;
         if(text) {
-            formationsHtml += `
-                <div style="margin-bottom:8px;">
-                    ${formatLines(text)} 
-                    ${tags.length > 0 ? `<br><i style="font-size:0.9em;">${tags.join(', ')}</i>` : ''}
-                </div>`;
+            formationsHtml += `<div style="margin-bottom:8px;">${formatLines(text)} ${mod ? `<br><i>Module: ${mod}</i>` : ''}</div>`;
         }
     });
 
@@ -392,29 +384,18 @@
     }
 
     function addModuleTag(selectElement) {
-    const val = selectElement.value;
-    if (!val) return;
-    
-    // On cible le conteneur de tags spécifique à ce bloc de formation
-    const container = selectElement.parentElement.querySelector('.tagsModules');
-    
-    // Vérification anti-doublon (pour ne pas ajouter 2 fois le même module)
-    const existingTags = Array.from(container.querySelectorAll('.tag')).map(t => t.innerText.replace('✕', '').trim());
-    if (existingTags.includes(val)) {
-        alert("Ce module est déjà ajouté.");
-        return;
+        const val = selectElement.value;
+        if (!val) return;
+        const container = selectElement.parentElement.querySelector('.tagsModules');
+        if (container.innerHTML.includes(val)) return;
+        const span = document.createElement('span');
+        span.className = 'tag';
+        span.innerHTML = `${val}<b onclick="this.parentElement.remove(); update()">✕</b>`;
+        container.appendChild(span);
+        selectElement.value = "";
+        update();
     }
 
-    // Création du tag
-    const span = document.createElement('span');
-    span.className = 'tag';
-    span.style.marginRight = "5px"; // Petit espacement visuel
-    span.innerHTML = `${val}<b onclick="this.parentElement.remove(); update()" style="cursor:pointer; margin-left:5px;">✕</b>`;
-    container.appendChild(span);
-    
-    selectElement.value = ""; // Reset du menu déroulant
-    update(); // Mise à jour immédiate du CV
-}
     window.onload = init;
 </script>
 </body>
