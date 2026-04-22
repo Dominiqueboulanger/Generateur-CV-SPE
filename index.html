@@ -132,14 +132,15 @@
 
     <h2>🎓 Formations</h2>
 <div id="edu-inputs">
-    <div style="border: 2px solid var(--main-color); padding: 10px; margin-bottom: 10px; border-radius: 6px;">
-        <input type="text" class="edu-in" placeholder="Année" oninput="update()">
-        <input type="text" class="edu-in" placeholder="Organisme de formation" oninput="update()">
-        <select id="selModules" onchange="update()">
-            <option value="">-- Choisir un module (métier) --</option>
+    <div class="edu-group">
+        <textarea class="edu-in" placeholder="Diplôme (en gras)&#10;École et Année" oninput="update()" rows="2"></textarea>
+        <label>Module associé :</label>
+        <select class="selModules" onchange="update()">
+            <option value="">-- Choisir un module --</option>
         </select>
-        <textarea class="edu-in" placeholder="Description de la formation" oninput="update()" rows="2"></textarea>
     </div>
+</div>
+<button onclick="addEdu()">+ Ajouter une formation</button>
     
     <div style="border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; border-radius: 6px;">
         <input type="text" class="edu-in" placeholder="Année" oninput="update()">
