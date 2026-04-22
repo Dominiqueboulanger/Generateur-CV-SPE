@@ -280,68 +280,42 @@
     const profil = document.getElementById('profil').value;
     const interets = document.getElementById('interets').value;
     const langues = document.getElementById('langues').value;
-    const genre = document.getElementById('genre').value;
+    const genre = document.getElementById('genre').value; // 'm' ou 'f'
     const selectMetier = document.getElementById('metier');
     const codeMetier = selectMetier.value;
 
-    // Récupération intelligente du nom du métier selon le genre
+    // --- SEULE GESTION DU MÉTIER : Via metiersRef ---
     let metierFinal = "MÉTIER";
     if (codeMetier && metiersRef[codeMetier]) {
-        metierFinal = metiersRef[codeMetier][genre]; // Accède directement à "m" ou "f"
-    }
-    
-    // --- Gestion du Genre et Métier ---
-    const genre = document.getElementById('genre').value;
-    const selectMetier = document.getElementById('metier');
-    // On récupère le texte affiché dans la liste
-    let metierFinal = (selectMetier.value === "") ? "MÉTIER" : selectMetier.options[selectMetier.selectedIndex].text;
-
-    // Adaptation selon le genre
-    if (genre === 'f') {
-        metierFinal = metierFinal.replace("Assistant de Vie", "Assistante de Vie")
-                                 .replace("Employé Familial", "Employée Familiale")
-                                 .replace("Garde d'enfants", "Assistante Parentale");
-    } else {
-        // Retour à la version masculine si besoin
-        metierFinal = metierFinal.replace("Assistante de Vie", "Assistant de Vie")
-                                 .replace("Employée Familiale", "Employé Familial")
-                                 .replace("Assistante Parentale", "Garde d'enfants");
+        metierFinal = metiersRef[codeMetier][genre] || "MÉTIER";
+    } else if (codeMetier) {
+        // Fallback si le JSON n'est pas encore chargé
+        metierFinal = selectMetier.options[selectMetier.selectedIndex].text;
     }
 
-    // --- Gestion des Formations ---
+    // --- RESTE DU CODE (expériences, formations, etc.) ---
     const eduGroups = document.querySelectorAll('.edu-group');
     let formationsHtml = "";
-    
     eduGroups.forEach(group => {
         const text = group.querySelector('.edu-in').value;
         const tagElements = group.querySelectorAll('.tagsModules .tag');
         const tags = Array.from(tagElements).map(t => t.innerText.replace('✕', '').trim());
-        
         if(text) {
-            formationsHtml += `
-                <div style="margin-bottom:8px;">
-                    ${formatLines(text)} 
-                    ${tags.length > 0 ? `<br><i style="font-size:0.9em;">${tags.join(', ')}</i>` : ''}
-                </div>`;
+            formationsHtml += `<div style="margin-bottom:8px;">${formatLines(text)} ${tags.length > 0 ? `<br><i style="font-size:0.9em;">${tags.join(', ')}</i>` : ''}</div>`;
         }
     });
 
-    // --- Gestion des Expériences ---
     const expGroups = document.querySelectorAll('.exp-group');
     let experiencesHtml = "";
     expGroups.forEach(group => {
         const inputs = group.querySelectorAll('input'); 
         const details = group.querySelector('.exp-in').value;
         if(inputs[0].value || inputs[1].value || inputs[2].value || details) {
-            experiencesHtml += `<div style="margin-bottom:10px;">
-                <b style="color:var(--main-color);">${inputs[0].value} ${inputs[0].value && inputs[1].value ? ' - ' : ''} ${inputs[1].value}</b><br>
-                <span class="cv-item-title">${inputs[2].value}</span>
-                <div style="font-size:0.9em; margin-top:2px;">${details.replace(/\n/g, '<br>')}</div>
-            </div>`;
+            experiencesHtml += `<div style="margin-bottom:10px;"><b style="color:var(--main-color);">${inputs[0].value} ${inputs[0].value && inputs[1].value ? ' - ' : ''} ${inputs[1].value}</b><br><span class="cv-item-title">${inputs[2].value}</span><div style="font-size:0.9em; margin-top:2px;">${details.replace(/\n/g, '<br>')}</div></div>`;
         }
     });
 
-    // --- Construction du CV ---
+    // --- CONSTRUCTION DU CV ---
     paper.innerHTML = `
         <div class="cv-header-line" style="display:flex; align-items:center;">
             ${photoData ? `<img src="${photoData}" style="width:${size}px; height:${size}px; border-radius:50%; object-fit:cover; margin-right:20px; border:2px solid var(--main-color);">` : ''}
@@ -351,29 +325,18 @@
                 <p style="margin:0; font-size:0.8em;">${document.getElementById('adresse').value}</p>
             </div>
         </div>
-        
         <div class="cv-badge">${metierFinal}</div>
-        
         ${profil ? `<p class="cv-quote">${profil}</p>` : ''}
-        
         <div class="grid">
-            <div>
-                ${selectedSkills.tech.length > 0 ? `<h2>Savoir-Faire</h2><ul style="padding-left:15px; font-size:0.85em; margin:0;">${selectedSkills.tech.map(t => `<li>${t}</li>`).join('')}</ul>` : ''}
-            </div>
-            <div>
-                ${selectedSkills.hum.length > 0 ? `<h2>Compétences Sociales</h2><div style="margin-top:5px;">${selectedSkills.hum.map(h => `<span class="be-item">• ${h}</span>`).join('')}</div>` : ''}
-                ${langues ? `<h2 style="margin-top:10px;">Langues</h2><p style="font-size:0.85em; margin:0;">${langues}</p>` : ''}
-            </div>
+            <div>${selectedSkills.tech.length > 0 ? `<h2>Savoir-Faire</h2><ul style="padding-left:15px; font-size:0.85em; margin:0;">${selectedSkills.tech.map(t => `<li>${t}</li>`).join('')}</ul>` : ''}</div>
+            <div>${selectedSkills.hum.length > 0 ? `<h2>Compétences Sociales</h2><div style="margin-top:5px;">${selectedSkills.hum.map(h => `<span class="be-item">• ${h}</span>`).join('')}</div>` : ''}
+            ${langues ? `<h2 style="margin-top:10px;">Langues</h2><p style="font-size:0.85em; margin:0;">${langues}</p>` : ''}</div>
         </div>
-        
         ${experiencesHtml ? `<h2>Expériences Professionnelles</h2><div style="font-size:0.9em;">${experiencesHtml}</div>` : ''}
-        
         ${formationsHtml ? `<h2>Formations</h2><div style="font-size:0.9em;">${formationsHtml}</div>` : ''}
-        
         ${interets ? `<h2>Centres d'intérêt</h2><p style="font-size:0.9em; margin:0;">${interets}</p>` : ''}
     `;
     
-    // Mise à jour des tags (savoir-faire et compétences sociales)
     document.getElementById('tagsTech').innerHTML = selectedSkills.tech.map(t => `<span class="tag">${t}<b onclick="selectedSkills.tech=selectedSkills.tech.filter(x=>x!=='${t}');update()">✕</b></span>`).join('');
     document.getElementById('tagsHum').innerHTML = selectedSkills.hum.map(h => `<span class="tag">${h}<b onclick="selectedSkills.hum=selectedSkills.hum.filter(x=>x!=='${h}');update()">✕</b></span>`).join('');
 }
