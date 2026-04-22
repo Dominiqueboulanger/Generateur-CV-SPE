@@ -268,15 +268,22 @@
     const interets = document.getElementById('interets').value;
     const langues = document.getElementById('langues').value;
 
-    // --- Gestion des Formations (Logique existante) ---
+    // --- Gestion des Formations ---
     const eduGroups = document.querySelectorAll('.edu-group');
     let formationsHtml = "";
+    
     eduGroups.forEach(group => {
         const text = group.querySelector('.edu-in').value;
-        const mod = group.querySelector('.selModules').value;
+        // On récupère les tags (les modules ajoutés) dans ce groupe spécifique
+        const tagElements = group.querySelectorAll('.tagsModules .tag');
+        const tags = Array.from(tagElements).map(t => t.innerText.replace('✕', '').trim());
+        
         if(text) {
-            // Remplacez cette ligne dans la boucle de update() :
-    formationsHtml += `<div style="margin-bottom:8px;">${formatLines(text)} ${tags.length > 0 ? `<br><i>${tags.join(', ')}</i>` : ''}</div>`;
+            formationsHtml += `
+                <div style="margin-bottom:8px;">
+                    ${formatLines(text)} 
+                    ${tags.length > 0 ? `<br><i style="font-size:0.9em;">${tags.join(', ')}</i>` : ''}
+                </div>`;
         }
     });
 
