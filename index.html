@@ -123,7 +123,7 @@
         <textarea class="exp-desc" placeholder="Description des tâches" oninput="update()" rows="2"></textarea>
     </div>
 </div>
-
+<button class="btn btn-save" style="background: #27ae60; margin-bottom: 20px;" onclick="addExp()">+ Ajouter une expérience</button>
     <h2>🎓 Formations</h2>
     <div id="edu-inputs">
         <textarea class="edu-in" placeholder="Diplôme (en gras)&#10;École et Année" oninput="update()" rows="2"></textarea>
@@ -334,6 +334,15 @@ update();
     }
 
     window.onload = init;
+    function addExp() {
+    const container = document.getElementById('exp-inputs');
+    const newGroup = container.firstElementChild.cloneNode(true);
+    
+    // Vider les champs du nouveau bloc cloné
+    newGroup.querySelectorAll('input, textarea').forEach(el => el.value = '');
+    
+    container.appendChild(newGroup);
+}
 </script>
 </body>
 </html>
