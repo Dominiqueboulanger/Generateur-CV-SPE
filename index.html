@@ -365,6 +365,21 @@
     loadSkills(); 
 }
     window.onload = init;
+    function addExp() {
+    const container = document.getElementById('exp-inputs');
+    const newGroup = document.createElement('div');
+    newGroup.className = 'exp-group';
+    newGroup.style.marginBottom = "10px";
+    newGroup.innerHTML = `
+        <div class="grid" style="grid-template-columns: 1fr 1fr 1fr;">
+            <input type="text" placeholder="Date" oninput="update()">
+            <input type="text" placeholder="Employeur" oninput="update()">
+            <input type="text" placeholder="Intitulé" oninput="update()">
+        </div>
+        <textarea class="exp-in" placeholder="Détails" oninput="update()" rows="2"></textarea>
+    `;
+    container.appendChild(newGroup);
+}
 </script>
 </body>
 </html>
