@@ -80,6 +80,13 @@
                 <option value="150">Grande (150px)</option>
             </select>
         </div>
+        <div>
+            <label style="font-size: 0.8em; font-weight: bold;">Genre :</label>
+            <select id="genre" onchange="update()">
+                <option value="m">Masculin</option>
+                <option value="f">Féminin</option>
+            </select>
+        </div>
     </div>
     
     <input type="text" id="nom" placeholder="Prénom NOM" oninput="update()">
@@ -91,10 +98,7 @@
 
     <h2>🎯 Métier & Accroche</h2>
     <select id="metier" onchange="loadSkills()">
-        <option value="">-- Choisir le métier --</option>
-        <option value="Garde">Garde d'enfants</option>
-        <option value="ADVD">Assistant de Vie (ADVD)</option>
-        <option value="EF">Employé Familial</option>
+    <option value="">-- Choisir le métier --</option>
     </select>
     <textarea id="profil" placeholder="Phrase d'accroche..." oninput="update()"></textarea>
 
@@ -162,13 +166,38 @@
         update();
     }
 
-    async function init() {
-        try {
-            const response = await fetch('competences_SPE_par_metier.json?v=' + Date.now());
-            repoData = await response.json();
-        } catch(e) { console.error("Erreur référentiel"); }
+   async function init() {
+    try {
+        // 1. Chargement du fichier des libellés de métiers
+        const respM = await fetch('metiers.json?v=' + Date.now());
+        metiersRef = await respM.json();
+        
+        // 2. Remplissage automatique du menu déroulant #metier
+        const select = document.getElementById('metier');
+        // On vide le contenu actuel et on remet l'option par défaut
+        select.innerHTML = '<option value="">-- Choisir le métier --</option>';
+        
+        // On boucle sur chaque clé du fichier JSON
+        for (const code in metiersRef) {
+            const option = document.createElement('option');
+            option.value = code; // Exemple: "Garde"
+            option.text = metiersRef[code]['m']; // Utilise la forme masculine pour l'affichage dans la liste
+            select.add(option);
+        }
+        
+        // 3. Chargement du fichier des compétences
+        const response = await fetch('competences_SPE_par_metier.json?v=' + Date.now());
+        repoData = await response.json();
+        
+        // 4. Mise à jour de l'affichage
+        update();
+        
+    } catch(e) {
+        console.error("Erreur de chargement des données :", e);
+        // Même en cas d'erreur, on tente de mettre à jour le CV
         update();
     }
+}
 
     async function loadRemoteModel() {
         if(confirm("Charger le modèle exemple ?")) {
@@ -189,6 +218,7 @@
         document.getElementById('metier').value = d.metier || '';
         document.getElementById('profil').value = d.profil || '';
         document.getElementById('interets').value = d.interets || '';
+        if(d.genre) document.getElementById('genre').value = d.genre;
         if(d.photoSize) document.getElementById('photo-size').value = d.photoSize;
         selectedSkills.tech = d.tech || [];
         selectedSkills.hum = d.hum || [];
@@ -267,35 +297,42 @@
     const profil = document.getElementById('profil').value;
     const interets = document.getElementById('interets').value;
     const langues = document.getElementById('langues').value;
+    const genre = document.getElementById('genre').value; // 'm' ou 'f'
+    const selectMetier = document.getElementById('metier');
+    const codeMetier = selectMetier.value;
 
-    // --- Gestion des Formations (Logique existante) ---
+    // --- SEULE GESTION DU MÉTIER : Via metiersRef ---
+    let metierFinal = "MÉTIER";
+    if (codeMetier && metiersRef[codeMetier]) {
+        metierFinal = metiersRef[codeMetier][genre] || "MÉTIER";
+    } else if (codeMetier) {
+        // Fallback si le JSON n'est pas encore chargé
+        metierFinal = selectMetier.options[selectMetier.selectedIndex].text;
+    }
+
+    // --- RESTE DU CODE (expériences, formations, etc.) ---
     const eduGroups = document.querySelectorAll('.edu-group');
     let formationsHtml = "";
     eduGroups.forEach(group => {
         const text = group.querySelector('.edu-in').value;
-        const mod = group.querySelector('.selModules').value;
+        const tagElements = group.querySelectorAll('.tagsModules .tag');
+        const tags = Array.from(tagElements).map(t => t.innerText.replace('✕', '').trim());
         if(text) {
-            formationsHtml += `<div style="margin-bottom:8px;">${formatLines(text)} ${mod ? `<br><i>Module: ${mod}</i>` : ''}</div>`;
+            formationsHtml += `<div style="margin-bottom:8px;">${formatLines(text)} ${tags.length > 0 ? `<br><i style="font-size:0.9em;">${tags.join(', ')}</i>` : ''}</div>`;
         }
     });
 
-    // --- Gestion des Expériences (Nouvelle logique alignée) ---
     const expGroups = document.querySelectorAll('.exp-group');
     let experiencesHtml = "";
     expGroups.forEach(group => {
-        const inputs = group.querySelectorAll('input'); // Date, Employeur, Intitulé
+        const inputs = group.querySelectorAll('input');
         const details = group.querySelector('.exp-in').value;
-        // On affiche seulement si au moins un champ est rempli
         if(inputs[0].value || inputs[1].value || inputs[2].value || details) {
-            experiencesHtml += `<div style="margin-bottom:10px;">
-                <b style="color:var(--main-color);">${inputs[0].value} ${inputs[0].value && inputs[1].value ? ' - ' : ''} ${inputs[1].value}</b><br>
-                <span class="cv-item-title">${inputs[2].value}</span>
-                <div style="font-size:0.9em; margin-top:2px;">${details.replace(/\n/g, '<br>')}</div>
-            </div>`;
+            experiencesHtml += `<div style="margin-bottom:10px;"><b style="color:var(--main-color);">${inputs[0].value} ${inputs[0].value && inputs[1].value ? ' - ' : ''} ${inputs[1].value}</b><br><span class="cv-item-title">${inputs[2].value}</span><div style="font-size:0.9em; margin-top:2px;">${details.replace(/\n/g, '<br>')}</div></div>`;
         }
     });
 
-    // --- Construction du CV ---
+    // --- CONSTRUCTION DU CV ---
     paper.innerHTML = `
         <div class="cv-header-line" style="display:flex; align-items:center;">
             ${photoData ? `<img src="${photoData}" style="width:${size}px; height:${size}px; border-radius:50%; object-fit:cover; margin-right:20px; border:2px solid var(--main-color);">` : ''}
@@ -305,25 +342,15 @@
                 <p style="margin:0; font-size:0.8em;">${document.getElementById('adresse').value}</p>
             </div>
         </div>
-        
-        <div class="cv-badge">${document.getElementById('metier').value || 'MÉTIER'}</div>
-        
+        <div class="cv-badge">${metierFinal}</div>
         ${profil ? `<p class="cv-quote">${profil}</p>` : ''}
-        
         <div class="grid">
-            <div>
-                ${selectedSkills.tech.length > 0 ? `<h2>Savoir-Faire</h2><ul style="padding-left:15px; font-size:0.85em; margin:0;">${selectedSkills.tech.map(t => `<li>${t}</li>`).join('')}</ul>` : ''}
-            </div>
-            <div>
-                ${selectedSkills.hum.length > 0 ? `<h2>Compétences Sociales</h2><div style="margin-top:5px;">${selectedSkills.hum.map(h => `<span class="be-item">• ${h}</span>`).join('')}</div>` : ''}
-                ${langues ? `<h2 style="margin-top:10px;">Langues</h2><p style="font-size:0.85em; margin:0;">${langues}</p>` : ''}
-            </div>
+            <div>${selectedSkills.tech.length > 0 ? `<h2>Savoir-Faire</h2><ul style="padding-left:15px; font-size:0.85em; margin:0;">${selectedSkills.tech.map(t => `<li>${t}</li>`).join('')}</ul>` : ''}</div>
+            <div>${selectedSkills.hum.length > 0 ? `<h2>Compétences Sociales</h2><div style="margin-top:5px;">${selectedSkills.hum.map(h => `<span class="be-item">• ${h}</span>`).join('')}</div>` : ''}
+            ${langues ? `<h2 style="margin-top:10px;">Langues</h2><p style="font-size:0.85em; margin:0;">${langues}</p>` : ''}</div>
         </div>
-        
         ${experiencesHtml ? `<h2>Expériences Professionnelles</h2><div style="font-size:0.9em;">${experiencesHtml}</div>` : ''}
-        
         ${formationsHtml ? `<h2>Formations</h2><div style="font-size:0.9em;">${formationsHtml}</div>` : ''}
-        
         ${interets ? `<h2>Centres d'intérêt</h2><p style="font-size:0.9em; margin:0;">${interets}</p>` : ''}
     `;
     
@@ -332,13 +359,21 @@
 }
     function saveData() {
         const fullData = {
-            nom: document.getElementById('nom').value, tel: document.getElementById('tel').value,
-            email: document.getElementById('email').value, adresse: document.getElementById('adresse').value,
-            langues: document.getElementById('langues').value, metier: document.getElementById('metier').value, 
-            profil: document.getElementById('profil').value, interets: document.getElementById('interets').value, 
-            tech: selectedSkills.tech, hum: selectedSkills.hum, photoSize: document.getElementById('photo-size').value,
+            nom: document.getElementById('nom').value, 
+            tel: document.getElementById('tel').value,
+            email: document.getElementById('email').value, 
+            adresse: document.getElementById('adresse').value,
+            langues: document.getElementById('langues').value, 
+            metier: document.getElementById('metier').value, 
+            profil: document.getElementById('profil').value, 
+            interets: document.getElementById('interets').value, 
+            tech: selectedSkills.tech, 
+            hum: selectedSkills.hum, 
+            photoSize: document.getElementById('photo-size').value,
             exp: Array.from(document.querySelectorAll('.exp-in')).map(i => i.value),
-            edu: Array.from(document.querySelectorAll('.edu-in')).map(i => i.value), photo: photoData
+            edu: Array.from(document.querySelectorAll('.edu-in')).map(i => i.value), 
+            photo: photoData,
+            genre: document.getElementById('genre').value // Pas de virgule après si c'est le dernier
         };
         const blob = new Blob([JSON.stringify(fullData)], {type: 'application/json'});
         const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
@@ -384,21 +419,33 @@
     }
 
     function addModuleTag(selectElement) {
-        const val = selectElement.value;
-        if (!val) return;
-        const container = selectElement.parentElement.querySelector('.tagsModules');
-        if (container.innerHTML.includes(val)) return;
-        const span = document.createElement('span');
-        span.className = 'tag';
-        span.innerHTML = `${val}<b onclick="this.parentElement.remove(); update()">✕</b>`;
-        container.appendChild(span);
-        selectElement.value = "";
-        update();
+    const val = selectElement.value;
+    if (!val) return;
+    
+    // On cible le conteneur de tags spécifique à ce bloc de formation
+    const container = selectElement.parentElement.querySelector('.tagsModules');
+    
+    // Vérification anti-doublon (pour ne pas ajouter 2 fois le même module)
+    const existingTags = Array.from(container.querySelectorAll('.tag')).map(t => t.innerText.replace('✕', '').trim());
+    if (existingTags.includes(val)) {
+        alert("Ce module est déjà ajouté.");
+        return;
     }
 
+    // Création du tag
+    const span = document.createElement('span');
+    span.className = 'tag';
+    span.style.marginRight = "5px"; // Petit espacement visuel
+    span.innerHTML = `${val}<b onclick="this.parentElement.remove(); update()" style="cursor:pointer; margin-left:5px;">✕</b>`;
+    container.appendChild(span);
+    
+    selectElement.value = ""; // Reset du menu déroulant
+    update(); // Mise à jour immédiate du CV
+}
     window.onload = init;
 </script>
 </body>
 </html>
+
 
 
