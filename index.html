@@ -114,11 +114,16 @@
         <textarea class="exp-in" placeholder="Poste (en gras)&#10;Détails" oninput="update()" rows="2"></textarea>
     </div>
 
-    <h2>🎓 Formations</h2>
+   <h2>🎓 Formations</h2>
     <div id="edu-inputs">
-        <textarea class="edu-in" placeholder="Diplôme (en gras)&#10;École et Année" oninput="update()" rows="2"></textarea>
-        <textarea class="edu-in" placeholder="Diplôme (en gras)&#10;École et Année" oninput="update()" rows="2"></textarea>
+        <textarea class="edu-in" placeholder="Diplôme..." oninput="update()" rows="2"></textarea>
+        
+        <label style="font-size: 0.8em;">Module associé :</label>
+        <select id="selModules" onchange="update()">
+            <option value="">-- Choisir un module --</option>
+        </select>
     </div>
+    <button onclick="addEdu()">+ Ajouter une formation</button>
 
     <h2>🎨 Centres d'intérêt</h2>
     <input type="text" id="interets" placeholder="Loisirs..." oninput="update()">
@@ -189,31 +194,31 @@
     }
 
    function loadSkills() {
-        const m = document.getElementById('metier').value;
-        const sT = document.getElementById('selTech');
-        const sH = document.getElementById('selHum');
-        const sMod = document.getElementById('selModules'); // Assurez-vous d'avoir ce select dans le HTML
+    const m = document.getElementById('metier').value;
+    const sT = document.getElementById('selTech');
+    const sH = document.getElementById('selHum');
+    const sMod = document.getElementById('selModules'); // Le nouveau menu pour les modules
 
-        sT.innerHTML = sH.innerHTML = '<option value="">-- Sélectionner --</option>';
-        if (sMod) sMod.innerHTML = '<option value="">-- Choisir un module --</option>';
+    // Réinitialisation des menus
+    sT.innerHTML = sH.innerHTML = '<option value="">-- Sélectionner --</option>';
+    if (sMod) sMod.innerHTML = '<option value="">-- Choisir un module --</option>';
 
-        if(m && repoData[m]) {
-            // Remplir les Techniques
-            repoData[m].Techniques.forEach(t => sT.innerHTML += `<option value="${t}">${t}</option>`);
-            
-            // Remplir les Compétences Sociales (Humaines)
-            repoData[m].Humaines.forEach(h => sH.innerHTML += `<option value="${h}">${h}</option>`);
-            
-            // Remplir les Modules
-            if (sMod && repoData[m].modules) {
-                repoData[m].modules.forEach(mod => {
-                    sMod.innerHTML += `<option value="${mod}">${mod}</option>`;
-                });
-            }
+    if(m && repoData[m]) {
+        // Remplir les Techniques
+        repoData[m].Techniques.forEach(t => sT.innerHTML += `<option value="${t}">${t}</option>`);
+        
+        // Remplir les Compétences Sociales
+        repoData[m].Humaines.forEach(h => sH.innerHTML += `<option value="${h}">${h}</option>`);
+        
+        // Remplir les Modules (si le métier en possède)
+        if (sMod && repoData[m].modules) {
+            repoData[m].modules.forEach(mod => {
+                sMod.innerHTML += `<option value="${mod}">${mod}</option>`;
+            });
         }
-        update();
     }
-update();
+    update();
+}
 
     function addTag(type, el) {
         if(el.value && !selectedSkills[type].includes(el.value)) {
