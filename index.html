@@ -308,13 +308,20 @@
     const selectMetier = document.getElementById('metier');
     const codeMetier = selectMetier.value;
 
-    // --- SEULE GESTION DU MÉTIER : Via metiersRef ---
+    // --- GESTION DU MÉTIER ---
     let metierFinal = "MÉTIER";
-    if (codeMetier && metiersRef[codeMetier]) {
-        metierFinal = metiersRef[codeMetier][genre] || "MÉTIER";
-    } else if (codeMetier) {
-        // Fallback si le JSON n'est pas encore chargé
-        metierFinal = metiersRef[codeMetier][genre] || metiersRef[codeMetier]['m'];
+    // Si vous utilisez l'objet "metiersData" défini dans init, 
+    // il faut le rendre global ou le déclarer en haut du script.
+    
+    // Voici la version sécurisée :
+    const metiersData = {
+        "EF": { "m": "Employé Familial", "f": "Employée Familiale" },
+        "ADVD": { "m": "Assistant de Vie", "f": "Assistante de Vie" },
+        "Garde": { "m": "Assistant Parental", "f": "Assistante Parentale" }
+    };
+
+    if (codeMetier && metiersData[codeMetier]) {
+        metierFinal = metiersData[codeMetier][genre];
     }
 
     // --- RESTE DU CODE (expériences, formations, etc.) ---
