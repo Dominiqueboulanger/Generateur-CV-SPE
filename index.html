@@ -198,11 +198,9 @@
     const m = document.getElementById('metier').value;
     const sT = document.getElementById('selTech');
     const sH = document.getElementById('selHum');
-    const sMod = document.getElementById('selModules'); // Le nouveau menu pour les modules
-
+    
     // Réinitialisation des menus
     sT.innerHTML = sH.innerHTML = '<option value="">-- Sélectionner --</option>';
-    if (sMod) sMod.innerHTML = '<option value="">-- Choisir un module --</option>';
 
     if(m && repoData[m]) {
         // Remplir les Techniques
@@ -211,19 +209,20 @@
         // Remplir les Compétences Sociales
         repoData[m].Humaines.forEach(h => sH.innerHTML += `<option value="${h}">${h}</option>`);
         
-        // Dans loadSkills, remplacez la partie modules par :
-    const allModuleSelects = document.querySelectorAll('.selModules');
-    allModuleSelects.forEach(select => {
-        const currentVal = select.value;
-        select.innerHTML = '<option value="">-- Choisir un module --</option>';
-        if (repoData[m].modules) {
-            repoData[m].modules.forEach(mod => {
-                select.innerHTML += `<option value="${mod}" ${mod === currentVal ? 'selected' : ''}>${mod}</option>`;
-            });
-        }
-    });
+        // Mise à jour des modules
+        const allModuleSelects = document.querySelectorAll('.selModules');
+        allModuleSelects.forEach(select => {
+            const currentVal = select.value;
+            select.innerHTML = '<option value="">-- Choisir un module --</option>';
+            if (repoData[m].modules) {
+                repoData[m].modules.forEach(mod => {
+                    select.innerHTML += `<option value="${mod}" ${mod === currentVal ? 'selected' : ''}>${mod}</option>`;
+                });
+            }
+        });
+    }
     update();
-}
+} // Cette accolade ferme bien la fonction loadSkills
 
     function addTag(type, el) {
         if(el.value && !selectedSkills[type].includes(el.value)) {
