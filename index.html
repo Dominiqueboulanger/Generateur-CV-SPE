@@ -204,32 +204,35 @@
         reader.readAsDataURL(e.target.files[0]);
     }
 
-   function loadSkills() {
-        const m = document.getElementById('metier').value;
-        const sT = document.getElementById('selTech');
-        const sH = document.getElementById('selHum');
-        const sMod = document.getElementById('selModules'); // Assurez-vous d'avoir ce select dans le HTML
+    function loadSkills() {
+    const m = document.getElementById('metier').value;
+    const sT = document.getElementById('selTech');
+    const sH = document.getElementById('selHum');
 
-        sT.innerHTML = sH.innerHTML = '<option value="">-- Sélectionner --</option>';
-        if (sMod) sMod.innerHTML = '<option value="">-- Choisir un module --</option>';
+    // Réinitialisation des menus Techniques et Sociales
+    sT.innerHTML = sH.innerHTML = '<option value="">-- Sélectionner --</option>';
 
-        if(m && repoData[m]) {
-            // Remplir les Techniques
-            repoData[m].Techniques.forEach(t => sT.innerHTML += `<option value="${t}">${t}</option>`);
-            
-            // Remplir les Compétences Sociales (Humaines)
-            repoData[m].Humaines.forEach(h => sH.innerHTML += `<option value="${h}">${h}</option>`);
-            
-            // Remplir les Modules
-            if (sMod && repoData[m].modules) {
+    if(m && repoData[m]) {
+        // Remplir les Techniques
+        repoData[m].Techniques.forEach(t => sT.innerHTML += `<option value="${t}">${t}</option>`);
+        
+        // Remplir les Compétences Sociales
+        repoData[m].Humaines.forEach(h => sH.innerHTML += `<option value="${h}">${h}</option>`);
+        
+        // Mise à jour automatique des menus de formation (nouveauté)
+        if (repoData[m].modules) {
+            const moduleSelects = document.querySelectorAll('.edu-module');
+            moduleSelects.forEach(select => {
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">-- Choisir un module --</option>';
                 repoData[m].modules.forEach(mod => {
-                    sMod.innerHTML += `<option value="${mod}">${mod}</option>`;
+                    select.innerHTML += `<option value="${mod}" ${currentValue === mod ? 'selected' : ''}>${mod}</option>`;
                 });
-            }
+            });
         }
-        update();
     }
-update();
+    update();
+}
 
     function addTag(type, el) {
         if(el.value && !selectedSkills[type].includes(el.value)) {
