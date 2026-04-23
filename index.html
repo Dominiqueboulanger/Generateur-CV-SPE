@@ -134,12 +134,12 @@
   <h2>🎓 Formations</h2>
 <div id="edu-inputs">
     <div class="edu-group">
-    <textarea class="edu-in" ...></textarea>
-    <label>Module associé :</label>
-    <select class="selModules" onchange="addModuleTag(this)">
-        <option value="">-- Choisir un module --</option>
-    </select>
-    <div class="tagsModules"></div> 
+        <textarea class="edu-in" placeholder="Diplôme (en gras)&#10;École et Année" oninput="update()" rows="2"></textarea>
+        <label>Module associé :</label>
+        <select class="selModules" onchange="update()">
+            <option value="">-- Choisir un module --</option>
+        </select>
+    </div>
 </div>
 <button onclick="addEdu()">+ Ajouter une formation</button>
 
@@ -436,26 +436,18 @@
     }
 
     function addModuleTag(selectElement) {
-    const value = selectElement.value;
-    if (!value) return;
-
-    // 1. Trouver le conteneur de tags du bloc actuel
-    // On cherche le parent '.edu-group' puis on descend dans '.tagsModules'
-    const parentGroup = selectElement.closest('.edu-group');
-    const tagsContainer = parentGroup.querySelector('.tagsModules');
-
-    // 2. Créer le tag
-    const tag = document.createElement('span');
-    tag.className = 'tag';
-    tag.innerHTML = `${value} <span onclick="this.parentElement.remove(); update();" style="cursor:pointer;">✕</span>`;
+    const val = selectElement.value;
+    if (!val) return;
     
-    // 3. Ajouter au conteneur
-    tagsContainer.appendChild(tag);
+    // On cible le conteneur de tags spécifique à ce bloc de formation
+    const container = selectElement.parentElement.querySelector('.tagsModules');
     
-    // 4. IMPORTANT : Remettre le menu à zéro et rafraîchir le CV
-    selectElement.value = ""; 
-    update();
-}
+    // Vérification anti-doublon (pour ne pas ajouter 2 fois le même module)
+    const existingTags = Array.from(container.querySelectorAll('.tag')).map(t => t.innerText.replace('✕', '').trim());
+    if (existingTags.includes(val)) {
+        alert("Ce module est déjà ajouté.");
+        return;
+    }
 
     // Création du tag
     const span = document.createElement('span');
