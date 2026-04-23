@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Assistant CV SPE Professionnel - Version Couleurs Second</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --main-color: #3498db; --bg: #f4f7f6; --text: #2c3e50; --green-btn: #27ae60; --orange: #e67e22; --purple: #9b59b6; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--bg); margin: 0; padding: 20px; display: flex; gap: 20px; color: var(--text); }
+        
+        .form-side { width: 40%; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); height: 95vh; overflow-y: auto; }
+        .preview-side { width: 60%; background: #525659; padding: 20px; display: flex; justify-content: center; height: 95vh; overflow: auto; border-radius: 8px; }
+        
+        #cv-paper { width: 210mm; min-height: 297mm; background: white; padding: 10mm 12mm; box-sizing: border-box; box-shadow: 0 0 20px rgba(0,0,0,0.5); font-size: 10.5pt; line-height: 1.25; }
+        
+        h2 { font-size: 1.1em; color: var(--main-color); border-bottom: 2px solid var(--main-color); margin: 12px 0 6px 0; text-transform: uppercase; }
+        .cv-badge { background: var(--main-color); color: white; padding: 5px 15px; display: inline-block; border-radius: 4px; font-weight: bold; margin-bottom: 12px; }
+        .cv-header-line { border-bottom: 3px solid var(--main-color); padding-bottom: 12px; margin-bottom: 12px; }
+        .cv-quote {
+    border-left: 4px solid var(--main-color);
+    padding-left: 15px;
+    margin-bottom: 20px;
+    font-size: 1.2em;      /* Augmente la taille */
+    font-weight: 700;     /* Rend le texte en gras */
+    color: #2c3e50;
+    font-style: italic;
+}
+        input, select, textarea { width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; font-size: 0.9em; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .btn-zone { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .btn { border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; text-align: center; text-decoration: none; }
+        .btn-print { background: var(--green-btn); grid-column: span 2; font-size: 1.1em; padding: 15px; }
+        .btn-save { background: #34495e; }
+        .btn-load { background: var(--orange); }
+        .btn-model { background: var(--purple); grid-column: span 2; margin-bottom: 10px; }
+        
+        .tag { background: #f0f0f0; color: #333; padding: 3px 10px; border-radius: 15px; font-size: 10px; margin: 2px; display: inline-flex; align-items: center; border: 1px solid #ccc; }
+        .tag b { margin-left: 6px; cursor: pointer; color: #e74c3c; }
+        
+        .cv-item-title { font-weight: 700; display: block; margin-bottom: 0px; }
+        .be-item { font-size: 0.85em; margin-bottom: 3px; display: block; }
+
+        @media print {
+            .no-print { display: none !important; }
+            @page { size: A4; margin: 0; }
+            body { padding: 0; margin: 0; background: white; display: block; }
+            .preview-side { background: white; padding: 0; width: 100%; height: auto; overflow: visible; }
+            #cv-paper { box-shadow: none; margin: 0 auto; width: 210mm; height: 297mm; padding: 10mm; font-size: 10pt; overflow: hidden; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-side no-print">
+    <div style="background: #eee; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+        <label><b>🎨 Couleur du thème :</b></label>
+        <select id="color-picker" onchange="updateColor(this.value)" style="margin-top:5px; font-weight:bold;">
+            <option value="#3498db">Bleu (Classique)</option>
+            <option value="#2c3e50">Bleu Marine</option>
+            <option value="#e74c3c">Rouge</option>
+            <option value="#800000">Bordeaux</option>
+            <option value="#1b4d3e">Vert Foncé</option>
+            <option value="#6c5ce7">Violet</option>
+        </select>
+    </div>
+
+    <button class="btn btn-model" onclick="loadRemoteModel()">📋 Charger le modèle (Exemple)</button>
+    
+    <h2>👤 État Civil</h2>
+    <div class="grid">
+        <div>
+            <label style="font-size: 0.8em; font-weight: bold;">Photo :</label>
+            <input type="file" id="photo-input" accept="image/*" onchange="handlePhoto(event)">
+        </div>
+        <div>
+            <label style="font-size: 0.8em; font-weight: bold;">Taille photo :</label>
+            <select id="photo-size" onchange="update()">
+                <option value="60">Petite (60px)</option>
+                <option value="85" selected>Moyenne (85px)</option>
+                <option value="150">Grande (150px)</option>
+            </select>
+        </div>
+        <div>
+            <label style="font-size: 0.8em; font-weight: bold;">Genre :</label>
+            <select id="genre" onchange="update()">
+                <option value="m">Masculin</option>
+                <option value="f">Féminin</option>
+            </select>
+        </div>
+    </div>
+    
+    <input type="text" id="nom" placeholder="Prénom NOM" oninput="update()">
+    <div class="grid"><input type="text" id="tel" placeholder="Téléphone" oninput="update()"><input type="text" id="email" placeholder="Email" oninput="update()"></div>
+    <textarea id="adresse" placeholder="Adresse" oninput="update()"></textarea>
+
+    <h2>🌍 Langues</h2>
+    <input type="text" id="langues" placeholder="Ex: Volapuk (maternel), Anglais (A2)..." oninput="update()">
+
+    <h2>🎯 Métier & Accroche</h2>
+    <select id="metier" onchange="loadSkills()">
+    <option value="">-- Choisir le métier --</option>
+    </select>
+    <textarea id="profil" placeholder="Phrase d'accroche..." oninput="update()"></textarea>
+
+    <h2>🛠️ Savoir-Faire</h2>
+    <select id="selTech" onchange="addTag('tech', this)"></select>
+    <div class="input-group">
+        <input type="text" id="customTech" placeholder="Autre savoir-faire...">
+        <button class="btn-add" style="background:#333; color:white; border:none; padding:8px; border-radius:5px;" onclick="addCustomTag('tech')">+</button>
+    </div>
+    <div id="tagsTech"></div>
+
+    <h2>🤝 Compétences Sociales</h2>
+    <select id="selHum" onchange="addTag('hum', this)"></select>
+    <div class="input-group">
+        <input type="text" id="customHum" placeholder="Autre compétence sociale...">
+        <button class="btn-add" style="background:#333; color:white; border:none; padding:8px; border-radius:5px;" onclick="addCustomTag('hum')">+</button>
+    </div>
+    <div id="tagsHum"></div>
+
+    <h2>💼 Expériences Professionnelles</h2>
+<div id="exp-inputs">
+    <div class="exp-group" style="margin-bottom: 10px;">
+        <div class="grid" style="grid-template-columns: 1fr 1fr 1fr;">
+            <input type="text" placeholder="Date" oninput="update()">
+            <input type="text" placeholder="Employeur" oninput="update()">
+            <input type="text" placeholder="Intitulé" oninput="update()">
+        </div>
+        <textarea class="exp-in" placeholder="Détails" oninput="update()" rows="2"></textarea>
+    </div>
+</div>
+<button onclick="addExp()" class="btn" style="background:#3498db; width:100%; margin-bottom: 20px;">+ Ajouter une expérience</button>
+
+  <h2>🎓 Formations</h2>
+<div id="edu-inputs">
+    <div class="edu-group">
+        <textarea class="edu-in" placeholder="Diplôme (en gras)&#10;École et Année" oninput="update()" rows="2"></textarea>
+        <label>Module associé :</label>
+        <select class="selModules" onchange="update()">
+            <option value="">-- Choisir un module --</option>
+        </select>
+    </div>
+</div>
+<button onclick="addEdu()">+ Ajouter une formation</button>
+
+    <h2>🎨 Centres d'intérêt</h2>
+    <input type="text" id="interets" placeholder="Loisirs..." oninput="update()">
+
+    <div class="btn-zone">
+        <button class="btn btn-save" onclick="saveData()">💾 Sauvegarder</button>
+        <button class="btn btn-load" onclick="document.getElementById('load-file').click()">📂 Reprendre</button>
+        <input type="file" id="load-file" style="display:none" accept=".json" onchange="loadData(event)">
+        <button class="btn btn-print" onclick="window.print()">🖨️ GÉNÉRER LE PDF</button>
+    </div>
+</div>
+
+<div class="preview-side"><div id="cv-paper"></div></div>
+
+<script>
+    let repoData = {};
+    let metiersRef = {}; // <--- AJOUTEZ CETTE LIGNE ICI
+    let selectedSkills = { tech: [], hum: [] };
+    let photoData = "";
+
+    function updateColor(val) {
+        document.documentElement.style.setProperty('--main-color', val);
+        update();
+    }
+
+  
+    async function init() {
+    const select = document.getElementById('metier');
+    select.innerHTML = '<option value="">-- Choisir le métier --</option>';
+
+    // Les données sont ici, en dur
+    const metiersData = {
+        "EF": { "m": "Employé Familial", "f": "Employée Familiale" },
+        "ADVD": { "m": "Assistant de Vie", "f": "Assistante de Vie" },
+        "Garde": { "m": "Assistant Parental", "f": "Assistante Parentale" }
+    };
+
+    // 1. Remplissage du menu
+    for (const code in metiersData) {
+        const option = document.createElement('option');
+        option.value = code;
+        option.text = metiersData[code]['m'];
+        select.add(option);
+    }
+
+    // 2. Chargement des compétences (seul bloc try/catch nécessaire)
+    try {
+        const response = await fetch('competences_SPE_par_metier.json?v=' + Date.now());
+        repoData = await response.json();
+        
+    } catch(e) {
+        console.error("Fichier de compétences introuvable :", e);
+    }
+    loadSkills();
+    // 3. Mise à jour finale
+    update();
+} // <--- C'est ici que la fonction init se ferme, et il ne doit RIEN y avoir après.
+
+    async function loadRemoteModel() {
+        if(confirm("Charger le modèle exemple ?")) {
+            try {
+                const response = await fetch('./modele_cv.json?v=' + Date.now());
+                const d = await response.json();
+                applyDataToForm(d);
+            } catch(e) { alert("modele_cv.json introuvable."); }
+        }
+    }
+
+    function applyDataToForm(d) {
+        document.getElementById('nom').value = d.nom || '';
+        document.getElementById('tel').value = d.tel || '';
+        document.getElementById('email').value = d.email || '';
+        document.getElementById('adresse').value = d.adresse || '';
+        document.getElementById('langues').value = d.langues || '';
+        document.getElementById('metier').value = d.metier || '';
+        document.getElementById('profil').value = d.profil || '';
+        document.getElementById('interets').value = d.interets || '';
+        if(d.genre) document.getElementById('genre').value = d.genre;
+        if(d.photoSize) document.getElementById('photo-size').value = d.photoSize;
+        selectedSkills.tech = d.tech || [];
+        selectedSkills.hum = d.hum || [];
+        photoData = d.photo || '';
+        const expIn = document.querySelectorAll('.exp-in');
+        if(d.exp) d.exp.forEach((val, i) => { if(expIn[i]) expIn[i].value = val; });
+        const eduIn = document.querySelectorAll('.edu-in');
+        if(d.edu) d.edu.forEach((val, i) => { if(eduIn[i]) eduIn[i].value = val; });
+        loadSkills();
+        update();
+    }
+
+    function handlePhoto(e) {
+        const reader = new FileReader();
+        reader.onload = () => { photoData = reader.result; update(); };
+        reader.readAsDataURL(e.target.files[0]);
+    }
+
+   function loadSkills() {
+    const m = document.getElementById('metier').value;
+    const sT = document.getElementById('selTech');
+    const sH = document.getElementById('selHum');
+    
+    // Réinitialisation des menus
+    sT.innerHTML = sH.innerHTML = '<option value="">-- Sélectionner --</option>';
+
+    if(m && repoData[m]) {
+        // Remplir les Techniques
+        repoData[m].Techniques.forEach(t => sT.innerHTML += `<option value="${t}">${t}</option>`);
+        
+        // Remplir les Compétences Sociales
+        repoData[m].Humaines.forEach(h => sH.innerHTML += `<option value="${h}">${h}</option>`);
+        
+        // Mise à jour des modules
+        const allModuleSelects = document.querySelectorAll('.selModules');
+        allModuleSelects.forEach(select => {
+            const currentVal = select.value;
+            select.innerHTML = '<option value="">-- Choisir un module --</option>';
+            if (repoData[m].modules) {
+                repoData[m].modules.forEach(mod => {
+                    select.innerHTML += `<option value="${mod}" ${mod === currentVal ? 'selected' : ''}>${mod}</option>`;
+                });
+            }
+        });
+    }
+    update();
+} // Cette accolade ferme bien la fonction loadSkills
+
+    function addTag(type, el) {
+        if(el.value && !selectedSkills[type].includes(el.value)) {
+            selectedSkills[type].push(el.value); update();
+        }
+        el.value = "";
+    }
+
+    function addCustomTag(type) {
+        const id = type === 'tech' ? 'customTech' : 'customHum';
+        const val = document.getElementById(id).value.trim();
+        if(val && !selectedSkills[type].includes(val)) {
+            selectedSkills[type].push(val); document.getElementById(id).value = ""; update();
+        }
+    }
+
+    function formatLines(text) {
+        if (!text) return "";
+        const lines = text.split('\n');
+        const title = `<span class="cv-item-title">${lines[0]}</span>`;
+        if (lines.length === 1) return title;
+        const rest = lines.slice(1).join('<br>').replace(/\.\s+/g, '.<br>');
+        return `${title}${rest}`;
+    }
+
+    function update() {
+    const paper = document.getElementById('cv-paper');
+    const size = document.getElementById('photo-size').value;
+    const profil = document.getElementById('profil').value;
+    const interets = document.getElementById('interets').value;
+    const langues = document.getElementById('langues').value;
+    const genre = document.getElementById('genre').value; // 'm' ou 'f'
+    const selectMetier = document.getElementById('metier');
+    const codeMetier = selectMetier.value;
+
+    // --- GESTION DU MÉTIER ---
+    let metierFinal = "MÉTIER";
+    // Si vous utilisez l'objet "metiersData" défini dans init, 
+    // il faut le rendre global ou le déclarer en haut du script.
+    
+    // Voici la version sécurisée :
+    const metiersData = {
+        "EF": { "m": "Employé Familial", "f": "Employée Familiale" },
+        "ADVD": { "m": "Assistant de Vie", "f": "Assistante de Vie" },
+        "Garde": { "m": "Assistant Parental", "f": "Assistante Parentale" }
+    };
+
+    if (codeMetier && metiersData[codeMetier]) {
+        metierFinal = metiersData[codeMetier][genre];
+    }
+
+    // --- RESTE DU CODE (expériences, formations, etc.) ---
+    const eduGroups = document.querySelectorAll('.edu-group');
+    let formationsHtml = "";
+    eduGroups.forEach(group => {
+        const text = group.querySelector('.edu-in').value;
+        const tagElements = group.querySelectorAll('.tagsModules .tag');
+        const tags = Array.from(tagElements).map(t => t.innerText.replace('✕', '').trim());
+        if(text) {
+            formationsHtml += `<div style="margin-bottom:8px;">${formatLines(text)} ${tags.length > 0 ? `<br><i style="font-size:0.9em;">${tags.join(', ')}</i>` : ''}</div>`;
+        }
+    });
+
+    const expGroups = document.querySelectorAll('.exp-group');
+    let experiencesHtml = "";
+    expGroups.forEach(group => {
+        const inputs = group.querySelectorAll('input');
+        const details = group.querySelector('.exp-in').value;
+        
+        if(inputs[0].value || inputs[1].value || inputs[2].value || details) {
+            // AJOUTEZ CETTE LIGNE : une grille spécifique pour les 3 éléments
+            experiencesHtml += `
+            <div style="margin-bottom:10px;">
+                <div style="display:grid; grid-template-columns: 1fr 2fr 2fr; gap: 10px; color:#000; font-weight:bold;">
+                    <span>${inputs[0].value}</span>
+                    <span>${inputs[1].value}</span>
+                    <span>${inputs[2].value}</span>
+                </div>
+                <div style="font-size:0.9em; margin-top:2px;">${details.replace(/\n/g, '<br>')}</div>
+            </div>`;
+        }
+    });
+    // --- CONSTRUCTION DU CV ---
+    paper.innerHTML = `
+        <div class="cv-header-line" style="display:flex; align-items:center;">
+            ${photoData ? `<img src="${photoData}" style="width:${size}px; height:${size}px; border-radius:50%; object-fit:cover; margin-right:20px; border:2px solid var(--main-color);">` : ''}
+            <div style="flex:1;">
+                <h1 style="margin:0; font-size:1.8em;">${document.getElementById('nom').value || 'Prénom NOM'}</h1>
+                <p style="margin:2px 0; font-size:0.9em; color:#555;">${document.getElementById('tel').value} ${document.getElementById('tel').value && document.getElementById('email').value ? '|' : ''} ${document.getElementById('email').value}</p>
+                <p style="margin:0; font-size:0.8em;">${document.getElementById('adresse').value}</p>
+            </div>
+        </div>
+        <div class="cv-badge">${metierFinal}</div>
+        ${profil ? `<p class="cv-quote">${profil}</p>` : ''}
+        <div class="grid">
+            <div>${selectedSkills.tech.length > 0 ? `<h2>Savoir-Faire</h2><ul style="padding-left:15px; font-size:0.85em; margin:0;">${selectedSkills.tech.map(t => `<li>${t}</li>`).join('')}</ul>` : ''}</div>
+            <div>${selectedSkills.hum.length > 0 ? `<h2>Compétences Sociales</h2><div style="margin-top:5px;">${selectedSkills.hum.map(h => `<span class="be-item">• ${h}</span>`).join('')}</div>` : ''}
+            ${langues ? `<h2 style="margin-top:10px;">Langues</h2><p style="font-size:0.85em; margin:0;">${langues}</p>` : ''}</div>
+        </div>
+        ${experiencesHtml ? `<h2>Expériences Professionnelles</h2><div style="font-size:0.9em;">${experiencesHtml}</div>` : ''}
+        ${formationsHtml ? `<h2>Formations</h2><div style="font-size:0.9em;">${formationsHtml}</div>` : ''}
+        ${interets ? `<h2>Centres d'intérêt</h2><p style="font-size:0.9em; margin:0;">${interets}</p>` : ''}
+    `;
+    
+    document.getElementById('tagsTech').innerHTML = selectedSkills.tech.map(t => `<span class="tag">${t}<b onclick="selectedSkills.tech=selectedSkills.tech.filter(x=>x!=='${t}');update()">✕</b></span>`).join('');
+    document.getElementById('tagsHum').innerHTML = selectedSkills.hum.map(h => `<span class="tag">${h}<b onclick="selectedSkills.hum=selectedSkills.hum.filter(x=>x!=='${h}');update()">✕</b></span>`).join('');
+}
+    function saveData() {
+        const fullData = {
+            nom: document.getElementById('nom').value, 
+            tel: document.getElementById('tel').value,
+            email: document.getElementById('email').value, 
+            adresse: document.getElementById('adresse').value,
+            langues: document.getElementById('langues').value, 
+            metier: document.getElementById('metier').value, 
+            profil: document.getElementById('profil').value, 
+            interets: document.getElementById('interets').value, 
+            tech: selectedSkills.tech, 
+            hum: selectedSkills.hum, 
+            photoSize: document.getElementById('photo-size').value,
+            exp: Array.from(document.querySelectorAll('.exp-in')).map(i => i.value),
+            edu: Array.from(document.querySelectorAll('.edu-in')).map(i => i.value), 
+            photo: photoData,
+            genre: document.getElementById('genre').value // Pas de virgule après si c'est le dernier
+        };
+        const blob = new Blob([JSON.stringify(fullData)], {type: 'application/json'});
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+        a.download = `cv_${fullData.nom.replace(/\s/g, '_') || 'brouillon'}.json`; a.click();
+    }
+
+    function loadData(event) {
+        const reader = new FileReader();
+        reader.onload = (e) => { applyDataToForm(JSON.parse(e.target.result)); };
+        reader.readAsText(event.target.files[0]);
+    }
+    function addEdu() {
+        const container = document.getElementById('edu-inputs');
+        const newGroup = document.createElement('div');
+        newGroup.className = 'edu-group';
+        newGroup.style = "border:1px solid #eee; padding:10px; margin-bottom:10px; border-radius:8px;";
+        newGroup.innerHTML = `
+            <textarea class="edu-in" placeholder="Diplôme (en gras)&#10;École et Année" oninput="update()" rows="2"></textarea>
+            <label>Ajouter des modules :</label>
+            <select class="selModules" onchange="addModuleTag(this)">
+                <option value="">-- Choisir un module --</option>
+            </select>
+            <div class="tagsModules" style="margin-top:5px;"></div>
+        `;
+        container.appendChild(newGroup);
+        loadSkills(); 
+    }
+
+    function addExp() {
+        const container = document.getElementById('exp-inputs');
+        const newGroup = document.createElement('div');
+        newGroup.className = 'exp-group';
+        newGroup.style.marginBottom = "10px";
+        newGroup.innerHTML = `
+            <div class="grid" style="grid-template-columns: 1fr 1fr 1fr;">
+                <input type="text" placeholder="Date" oninput="update()">
+                <input type="text" placeholder="Employeur" oninput="update()">
+                <input type="text" placeholder="Intitulé" oninput="update()">
+            </div>
+            <textarea class="exp-in" placeholder="Détails" oninput="update()" rows="2"></textarea>
+        `;
+        container.appendChild(newGroup);
+    }
+
+    function addModuleTag(selectElement) {
+    const val = selectElement.value;
+    if (!val) return;
+    
+    // On cible le conteneur de tags spécifique à ce bloc de formation
+    const container = selectElement.parentElement.querySelector('.tagsModules');
+    
+    // Vérification anti-doublon (pour ne pas ajouter 2 fois le même module)
+    const existingTags = Array.from(container.querySelectorAll('.tag')).map(t => t.innerText.replace('✕', '').trim());
+    if (existingTags.includes(val)) {
+        alert("Ce module est déjà ajouté.");
+        return;
+    }
+
+    // Création du tag
+    const span = document.createElement('span');
+    span.className = 'tag';
+    span.style.marginRight = "5px"; // Petit espacement visuel
+    span.innerHTML = `${val}<b onclick="this.parentElement.remove(); update()" style="cursor:pointer; margin-left:5px;">✕</b>`;
+    container.appendChild(span);
+    
+    selectElement.value = ""; // Reset du menu déroulant
+    update(); // Mise à jour immédiate du CV
+}
+    window.onload = init;
+</script>
+</body>
+</html>
+
+
+
