@@ -191,11 +191,11 @@
     try {
         const response = await fetch('competences_SPE_par_metier.json?v=' + Date.now());
         repoData = await response.json();
-        loadSkills();
+        
     } catch(e) {
         console.error("Fichier de compétences introuvable :", e);
     }
-
+    loadSkills();
     // 3. Mise à jour finale
     update();
 } // <--- C'est ici que la fonction init se ferme, et il ne doit RIEN y avoir après.
