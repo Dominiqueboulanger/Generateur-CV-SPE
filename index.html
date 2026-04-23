@@ -335,11 +335,20 @@
     expGroups.forEach(group => {
         const inputs = group.querySelectorAll('input');
         const details = group.querySelector('.exp-in').value;
+        
         if(inputs[0].value || inputs[1].value || inputs[2].value || details) {
-            experiencesHtml += `<div style="margin-bottom:10px;"><b style="color:var(--main-color);">${inputs[0].value} ${inputs[0].value && inputs[1].value ? ' - ' : ''} ${inputs[1].value}</b><br><span class="cv-item-title">${inputs[2].value}</span><div style="font-size:0.9em; margin-top:2px;">${details.replace(/\n/g, '<br>')}</div></div>`;
+            // AJOUTEZ CETTE LIGNE : une grille spécifique pour les 3 éléments
+            experiencesHtml += `
+            <div style="margin-bottom:10px;">
+                <div style="display:grid; grid-template-columns: 1fr 2fr 2fr; gap: 10px; color:var(--main-color); font-weight:bold;">
+                    <span>${inputs[0].value}</span>
+                    <span>${inputs[1].value}</span>
+                    <span>${inputs[2].value}</span>
+                </div>
+                <div style="font-size:0.9em; margin-top:2px;">${details.replace(/\n/g, '<br>')}</div>
+            </div>`;
         }
     });
-
     // --- CONSTRUCTION DU CV ---
     paper.innerHTML = `
         <div class="cv-header-line" style="display:flex; align-items:center;">
