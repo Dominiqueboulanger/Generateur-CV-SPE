@@ -1,7 +1,7 @@
-1. Description Générale
+#1. Description Générale
 Le projet est une application web "Single Page Application" (SPA) conçue pour la génération dynamique de CV professionnels, spécifiquement adaptée aux métiers du service à la personne (SPE). L'outil permet une édition en temps réel avec une interface scindée en deux : une colonne de formulaire à gauche et une prévisualisation PDF à droite.
 
-2. Fonctionnalités Clés
+#2. Fonctionnalités Clés
 Édition en temps réel : Chaque modification dans le formulaire met immédiatement à jour la prévisualisation du CV.
 
 Dynamisme des données :
@@ -26,7 +26,7 @@ Upload de photo avec gestion dynamique de la taille.
 
 Impression : Feuille de style dédiée @media print pour garantir une mise en page optimale (format A4) lors de la génération PDF.
 
-3. Architecture Technique
+#3. Architecture Technique
 Structure HTML : Interface flex avec une sidebar (.form-side) et une zone de rendu (.preview-side).
 
 CSS : Utilisation de variables CSS pour le thémage, structure en grid et flexbox.
@@ -41,14 +41,14 @@ addModuleTag() : Logique de manipulation du DOM pour gérer les tags de modules 
 
 saveData() / loadData() : Fonctions de sérialisation/désérialisation JSON.
 
-4. Stack utilisée
+#4. Stack utilisée
 HTML5 / CSS3 / JavaScript Vanilla (ES6+).
 
 Google Fonts (Montserrat).
 
 Pas de dépendances externes (pas de framework type React/Vue), garantissant une portabilité totale.
 
-5. Instructions pour les prochaines évolutions
+#5. Instructions pour les prochaines évolutions
 Maintenir l'isolation des blocs lors de l'ajout d'expériences ou de formations.
 
 Veiller à la synchronisation entre le DOM généré dans update() et les écouteurs d'événements (notamment pour les boutons de suppression des tags).
