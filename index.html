@@ -196,7 +196,7 @@
     async function loadRemoteModel() {
         if(confirm("Charger le modèle exemple ?")) {
             try {
-                const response = await fetch('./modele_cv.json?v=' + Date.now());
+                const response = await fetch('https://dominiqueboulanger.github.io/Generateur-CV-SPE/modele_cv.json?v=' + Date.now());
                 const d = await response.json();
                 applyDataToForm(d);
             } catch(e) { alert("modele_cv.json introuvable."); }
